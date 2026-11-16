@@ -12,6 +12,17 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.vedruna.palcole.application.DeleteRoleUseCaseImpl;
+import org.vedruna.palcole.application.NewRoleUseCaseImpl;
+import org.vedruna.palcole.application.SelectAllRolesUseCaseImpl;
+import org.vedruna.palcole.application.SelectRoleByIdUseCaseImpl;
+import org.vedruna.palcole.application.UpdateRoleUseCaseImpl;
+import org.vedruna.palcole.domain.ports.inbound.DeleteRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.NewRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.SelectAllRolesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.UpdateRoleUseCase;
+import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 import org.vedruna.palcole.persistance.repository.UserRepository;
 
 /**
@@ -98,4 +109,30 @@ public class ApplicationConfig {
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
+  @Bean
+  NewRoleUseCase getNewRoleUseCase(RoleStorage roleStorage) {
+      return new NewRoleUseCaseImpl(roleStorage);
+  }
+
+  @Bean
+  SelectAllRolesUseCase getSelectAllRolesUseCase(RoleStorage roleStorage) {
+      return new SelectAllRolesUseCaseImpl(roleStorage);
+  }
+
+  @Bean
+  DeleteRoleUseCase getDeleteRoleUseCase(RoleStorage roleStorage) {
+      return new DeleteRoleUseCaseImpl(roleStorage);
+  }
+
+  @Bean
+  SelectRoleByIdUseCase getSelectRoleByIdUseCase(RoleStorage roleStorage) {
+      return new SelectRoleByIdUseCaseImpl(roleStorage);
+  }
+
+  @Bean
+  UpdateRoleUseCase getUpdateRoleUseCase(RoleStorage roleStorage) {
+      return new UpdateRoleUseCaseImpl(roleStorage);
+  }
+
 }

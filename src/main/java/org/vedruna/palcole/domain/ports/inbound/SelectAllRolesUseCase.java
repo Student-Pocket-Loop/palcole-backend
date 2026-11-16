@@ -5,5 +5,5 @@ import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 
 public interface SelectAllRolesUseCase {
-    PageModel<Role> selectAllRoles(PageableModel pageableModel);
+  PageModel<Role> selectAllRoles(PageableModel pageableModel);
 }

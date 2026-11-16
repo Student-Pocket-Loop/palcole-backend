@@ -5,9 +5,13 @@ import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 
 public interface RoleStorage {
-    PageModel<Role> selectAllRoles(PageableModel pageableModel);
-    Role findRoleById(Integer roleId);
-    Role updateRole(Role newRole);
-    Role insertRole(Role newRole);
-    void deleteRole(Integer roleId);
+  PageModel<Role> selectAllRoles(PageableModel pageableModel);
+
+  Role findRoleById(Integer roleId);
+
+  Role updateRole(Integer roleId, Role newRole);
+
+  Role insertRole(Role newRole);
+
+  void deleteRole(Integer roleId);
 }
