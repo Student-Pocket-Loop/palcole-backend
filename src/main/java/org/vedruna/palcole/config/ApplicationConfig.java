@@ -112,27 +112,26 @@ public class ApplicationConfig {
 
   @Bean
   NewRoleUseCase getNewRoleUseCase(RoleStorage roleStorage) {
-      return new NewRoleUseCaseImpl(roleStorage);
+    return new NewRoleUseCaseImpl(roleStorage);
   }
 
   @Bean
   SelectAllRolesUseCase getSelectAllRolesUseCase(RoleStorage roleStorage) {
-      return new SelectAllRolesUseCaseImpl(roleStorage);
+    return new SelectAllRolesUseCaseImpl(roleStorage);
   }
 
   @Bean
   DeleteRoleUseCase getDeleteRoleUseCase(RoleStorage roleStorage) {
-      return new DeleteRoleUseCaseImpl(roleStorage);
+    return new DeleteRoleUseCaseImpl(roleStorage);
   }
 
   @Bean
   SelectRoleByIdUseCase getSelectRoleByIdUseCase(RoleStorage roleStorage) {
-      return new SelectRoleByIdUseCaseImpl(roleStorage);
+    return new SelectRoleByIdUseCaseImpl(roleStorage);
   }
 
   @Bean
   UpdateRoleUseCase getUpdateRoleUseCase(RoleStorage roleStorage) {
-      return new UpdateRoleUseCaseImpl(roleStorage);
+    return new UpdateRoleUseCaseImpl(roleStorage);
   }
-
 }
