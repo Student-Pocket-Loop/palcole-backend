@@ -6,7 +6,6 @@ package org.vedruna.palcole.domain.modelutils;
  * <p>{@code @Data}: Métodos de acceso automáticos. {@code @NoArgsConstructor}: Constructor
  * predeterminado. {@code @AllArgsConstructor}: Constructor con todos los campos.
  */
-
 public class PageableModel {
   /** El número de página solicitado (empezando por 0). */
   private int page;
