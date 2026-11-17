@@ -50,7 +50,8 @@ public class RoleController {
   @PostMapping("/")
   public ResponseEntity<RoleDTO> insertIntoRole(@RequestBody @Valid InsertRoleDTO insertRoleDTO) {
     return ResponseEntity.ok(
-        roleInConverter.toDto(newRoleUseCase.newRole(roleInConverter.toDomainInsert(insertRoleDTO))));
+        roleInConverter.toDto(
+            newRoleUseCase.newRole(roleInConverter.toDomainInsert(insertRoleDTO))));
   }
 
   @GetMapping("/{roleId}")
@@ -64,7 +65,8 @@ public class RoleController {
       @PathVariable Integer roleId, @RequestBody @Valid InsertRoleDTO updateStudentDto) {
     return ResponseEntity.ok(
         roleInConverter.toDto(
-            updateRoleUseCase.updateRole(roleId, roleInConverter.toDomainInsert(updateStudentDto))));
+            updateRoleUseCase.updateRole(
+                roleId, roleInConverter.toDomainInsert(updateStudentDto))));
   }
 
   @DeleteMapping("/{roleId}")
