@@ -11,8 +11,8 @@ import org.vedruna.palcole.persistance.model.UserEntity;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserConverter {
 
-  /** Mapea un UserEntity a UserDto extrayendo el nombre del rol desde la relación. */
-  @Mapping(source = "userRol.rolName", target = "userRolName")
+  /** Mapea un UserEntity a UserDto extrayendo el nombre del role desde la relación. */
+  @Mapping(source = "userRol.name", target = "userRolName")
   UserDto toDto(UserEntity user);
 
   /** Convierte las credenciales de LoginRequestDto a un objeto UserEntity. */

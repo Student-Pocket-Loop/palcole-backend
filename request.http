@@ -13,7 +13,7 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "username": "joaquin",
+    "username": "manuel",
     "password": "Abcd1234"
 }
 
@@ -22,7 +22,7 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "username": "admin",
+    "username": "joaquin",
     "password": "Abcd1234"
 }
 
@@ -39,12 +39,41 @@ GET http://localhost:8080/api/v1/main/public
 
 ### PRIVATE
 GET http://localhost:8080/api/v1/main/private
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvYXF1aW5AbG9jYWxob3N0LmNvbSIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTQzMzk1NzAsImV4cCI6MTc5NDMzOTc1MH0.zaA1Yh0REus4uewj7HvDq0RdXbSlhVpzV_j8V2dJKRU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
 
 ### PROTECTED
 GET http://localhost:8080/api/v1/main/admin
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzk0MzM5NjE0LCJleHAiOjE3OTQzMzk3OTR9.dsp4sFIVZdajAPcRxVrMvsY47tJV_hayoKVCmrxr5fQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
 
 ### ME 
 GET http://localhost:8080/api/v1/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvYXF1aW5AbG9jYWxob3N0LmNvbSIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTQzMzg4NzYsImV4cCI6MTc5NDMzOTA1Nn0.3LUlUBY6CpK7Z_RbOEIADKHQtCiDvLDWDaVSG3fn_JU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+### GET ALL
+GET http://localhost:8080/api/v1/roles/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+
+### GET BY ID
+GET http://localhost:8080/api/v1/roles/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+
+### POST
+POST http://localhost:8080/api/v1/roles/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+
+{
+    "name": "USER"
+}
+
+### PUT
+PUT http://localhost:8080/api/v1/roles/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+
+{
+    "name": "NUEVO"
+}
+
+### DELETE
+DELETE http://localhost:8080/api/v1/roles/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org

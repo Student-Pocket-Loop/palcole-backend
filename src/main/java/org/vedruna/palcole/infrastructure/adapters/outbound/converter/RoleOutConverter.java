@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.RoleEntity;
+import org.vedruna.palcole.persistance.model.RoleEntity;
 
 @Mapper(componentModel = "spring")
 public interface RoleOutConverter {
@@ -32,7 +32,7 @@ public interface RoleOutConverter {
   }
 
   /** Convierte una página de entidades de usuario en una página de modelos de dominio. */
-  public default PageModel<Role> toStudentPageModel(Page<RoleEntity> page) {
+  public default PageModel<Role> toRolePageModel(Page<RoleEntity> page) {
     return new PageModel<>(
         page.getContent().stream().map(this::toDomain).toList(),
         page.getTotalElements(),

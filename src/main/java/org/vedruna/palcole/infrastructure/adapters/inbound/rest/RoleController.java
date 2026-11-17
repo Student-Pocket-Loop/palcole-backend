@@ -55,23 +55,21 @@ public class RoleController {
   }
 
   @GetMapping("/{roleId}")
-  public ResponseEntity<RoleDTO> getRoleById(@PathVariable Integer studentId) {
-    return ResponseEntity.ok(
-        roleInConverter.toDto(selectRoleByIdUseCase.selectRoleById(studentId)));
+  public ResponseEntity<RoleDTO> getRoleById(@PathVariable Integer roleId) {
+    return ResponseEntity.ok(roleInConverter.toDto(selectRoleByIdUseCase.selectRoleById(roleId)));
   }
 
   @PutMapping("/{roleId}")
   public ResponseEntity<RoleDTO> updateStudent(
-      @PathVariable Integer roleId, @RequestBody @Valid InsertRoleDTO updateStudentDto) {
+      @PathVariable Integer roleId, @RequestBody @Valid InsertRoleDTO insertRoleDTO) {
     return ResponseEntity.ok(
         roleInConverter.toDto(
-            updateRoleUseCase.updateRole(
-                roleId, roleInConverter.toDomainInsert(updateStudentDto))));
+            updateRoleUseCase.updateRole(roleId, roleInConverter.toDomainInsert(insertRoleDTO))));
   }
 
   @DeleteMapping("/{roleId}")
-  public ResponseEntity<Void> deleteStudent(@PathVariable Integer studentId) {
-    deleteRoleUseCase.deleteRole(studentId);
+  public ResponseEntity<Void> deleteStudent(@PathVariable Integer roleId) {
+    deleteRoleUseCase.deleteRole(roleId);
     return ResponseEntity.noContent().build();
   }
 }

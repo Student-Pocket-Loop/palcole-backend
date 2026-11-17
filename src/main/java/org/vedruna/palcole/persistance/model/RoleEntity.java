@@ -1,23 +1,29 @@
-package org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity;
+package org.vedruna.palcole.persistance.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "PalCole")
+@Table(name = "roles")
 public class RoleEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "role_id")
-  private Integer roleId;
+  Integer userId;
 
-  @Column(name = "name", nullable = false, unique = true, length = 100)
-  private String name;
+  @Column(name = "name")
+  String name;
+
+  @OneToMany(mappedBy = "userRol", cascade = CascadeType.ALL)
+  List<UserEntity> users;
 }

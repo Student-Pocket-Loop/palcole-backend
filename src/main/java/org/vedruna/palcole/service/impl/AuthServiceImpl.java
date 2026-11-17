@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.vedruna.palcole.controller.dto.authdto.AuthResponseDto;
-import org.vedruna.palcole.persistance.model.RolEntity;
+import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
-import org.vedruna.palcole.persistance.repository.RolRepository;
+import org.vedruna.palcole.persistance.repository.RoleRepository;
 import org.vedruna.palcole.persistance.repository.UserRepository;
 import org.vedruna.palcole.service.AuthService;
 
@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
   private final UserRepository userRepo;
 
   /** Repositorio para acceder y manipular los datos de la entidad Rol. */
-  private final RolRepository rolRepo;
+  private final RoleRepository rolRepo;
 
   /** Servicio para la creación y validación de JSON Web Tokens (JWT). */
   private final JwtServiceImpl jwtService;
@@ -94,10 +94,8 @@ public class AuthServiceImpl implements AuthService {
   public UserEntity register(UserEntity user) {
     // 1. Busca el rol por defecto (asumido como ID 2)
     // TODO: excepcion personalizada
-    RolEntity rol =
-        rolRepo
-            .findByRolName("USER")
-            .orElseThrow(() -> new NoSuchElementException("Rol not found"));
+    RoleEntity rol =
+        rolRepo.findByName("USER").orElseThrow(() -> new NoSuchElementException("Rol not found"));
 
     LocalDateTime now = LocalDateTime.now();
 
