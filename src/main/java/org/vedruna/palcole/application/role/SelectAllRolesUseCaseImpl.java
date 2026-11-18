@@ -3,7 +3,7 @@ package org.vedruna.palcole.application.role;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.domain.ports.inbound.SelectAllRolesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
 public class SelectAllRolesUseCaseImpl implements SelectAllRolesUseCase {

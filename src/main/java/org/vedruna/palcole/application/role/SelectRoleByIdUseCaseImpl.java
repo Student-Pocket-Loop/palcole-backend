@@ -1,7 +1,7 @@
 package org.vedruna.palcole.application.role;
 
 import org.vedruna.palcole.domain.model.Role;
-import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
 public class SelectRoleByIdUseCaseImpl implements SelectRoleByIdUseCase {

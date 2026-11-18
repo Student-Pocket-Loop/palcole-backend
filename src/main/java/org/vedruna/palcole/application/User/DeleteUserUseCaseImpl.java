@@ -1,5 +1,8 @@
 package org.vedruna.palcole.application.User;
 
+import org.vedruna.palcole.domain.ports.inbound.user.DeleteUserUseCase;
+import org.vedruna.palcole.domain.ports.outbound.UserStorage;
+
 public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
 
   private final UserStorage userStorage;

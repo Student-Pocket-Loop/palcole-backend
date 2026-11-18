@@ -1,4 +1,4 @@
-package org.vedruna.palcole.domain.ports.inbound;
+package org.vedruna.palcole.domain.ports.inbound.role;
 
 import org.vedruna.palcole.domain.model.Role;
 

@@ -1,7 +1,7 @@
 package org.vedruna.palcole.application.role;
 
 import org.vedruna.palcole.domain.model.Role;
-import org.vedruna.palcole.domain.ports.inbound.NewRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
 public class NewRoleUseCaseImpl implements NewRoleUseCase {

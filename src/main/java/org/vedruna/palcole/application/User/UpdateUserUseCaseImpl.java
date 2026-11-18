@@ -1,7 +1,7 @@
 package org.vedruna.palcole.application.User;
 
 import org.vedruna.palcole.domain.model.User;
-import org.vedruna.palcole.domain.ports.inbound.UpdateUserUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 
 public class UpdateUserUseCaseImpl implements UpdateUserUseCase {

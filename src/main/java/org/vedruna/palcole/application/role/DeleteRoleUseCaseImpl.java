@@ -1,6 +1,6 @@
 package org.vedruna.palcole.application.role;
 
-import org.vedruna.palcole.domain.ports.inbound.DeleteRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
 public class DeleteRoleUseCaseImpl implements DeleteRoleUseCase {

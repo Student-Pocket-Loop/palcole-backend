@@ -1,18 +1,19 @@
 package org.vedruna.palcole.application.User;
 
 import org.vedruna.palcole.domain.model.User;
-import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
+import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
+import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 
 public class NewUserUseCaseImpl implements NewUserUseCase {
 
-  private final RoleStorage roleStorage;
+  private final UserStorage userStorage;
 
-  public NewUserUseCaseImpl(UserStorage roleStorage) {
-    this.roleStorage = roleStorage;
+  public NewUserUseCaseImpl(UserStorage userStorage) {
+    this.userStorage = userStorage;
   }
 
   @Override
-  public User newRole(User newRole) {
-    return roleStorage.insertUser(newRole);
+  public User newUser(User newUser) {
+    return userStorage.insertUser(newUser);
   }
 }

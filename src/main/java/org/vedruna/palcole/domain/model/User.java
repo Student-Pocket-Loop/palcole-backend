@@ -128,5 +128,4 @@ public class User {
         expirationDate,
         active);
   }
-
 }
