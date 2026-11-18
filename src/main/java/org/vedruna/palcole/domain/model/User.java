@@ -12,9 +12,9 @@ public class User {
   private String educationalCenter = "Santa Joaquina de Vedruna";
   private LocalDateTime createDate = LocalDateTime.now();
   private LocalDateTime accountExpirationDate;
-  private boolean isLocked = false;
+  private Boolean isLocked = false;
   private LocalDateTime credentialsExpirationDate;
-  private boolean isEnabled = true;
+  private Boolean isEnabled = true;
 
   public User() {}
 

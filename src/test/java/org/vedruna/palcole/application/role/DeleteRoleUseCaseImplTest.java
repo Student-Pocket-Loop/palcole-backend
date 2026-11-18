@@ -1,4 +1,4 @@
-package org.vedruna.palcole.application;
+package org.vedruna.palcole.application.role;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.vedruna.palcole.application.role.DeleteRoleUseCaseImpl;
-import org.vedruna.palcole.domain.exception.RoleNotFoundException;
+import org.vedruna.palcole.domain.exception.role.RoleNotFoundException;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
 @ExtendWith(MockitoExtension.class)

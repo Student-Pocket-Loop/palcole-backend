@@ -1,4 +1,4 @@
-package org.vedruna.palcole.domain.exception;
+package org.vedruna.palcole.domain.exception.role;
 
 /**
  * Excepción de dominio que indica que ya existe un role con el mismo nombre. Regla de negocio: el
