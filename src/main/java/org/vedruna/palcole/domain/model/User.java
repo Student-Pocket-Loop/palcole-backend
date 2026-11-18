@@ -1,6 +1,7 @@
 package org.vedruna.palcole.domain.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class User {
   private Integer userId;
@@ -95,4 +96,37 @@ public class User {
   public void setActive(boolean active) {
     this.active = active;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return verified == user.verified
+        && active == user.active
+        && Objects.equals(userId, user.userId)
+        && Objects.equals(roleId, user.roleId)
+        && Objects.equals(username, user.username)
+        && Objects.equals(email, user.email)
+        && Objects.equals(passwordHash, user.passwordHash)
+        && Objects.equals(educationalCenter, user.educationalCenter)
+        && Objects.equals(registrationDate, user.registrationDate)
+        && Objects.equals(expirationDate, user.expirationDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        userId,
+        roleId,
+        username,
+        email,
+        passwordHash,
+        educationalCenter,
+        verified,
+        registrationDate,
+        expirationDate,
+        active);
+  }
+
 }

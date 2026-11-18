@@ -1,4 +1,4 @@
-package org.vedruna.palcole.application;
+package org.vedruna.palcole.application.role;
 
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
