@@ -2,13 +2,12 @@ package org.vedruna.palcole.domain.modelutils;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Modelo genérico para representar una página de resultados con metadatos de paginación.
  *
  * @param <T> El tipo de contenido de la página.
- *     <p>{@code @Data}: Métodos boilerplate. {@code @NoArgsConstructor}: Constructor vacío.
- *     {@code @AllArgsConstructor}: Constructor completo.
  */
 public class PageModel<T> implements Serializable {
 
@@ -95,5 +94,23 @@ public class PageModel<T> implements Serializable {
 
   public void setNumber(int number) {
     this.number = number;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    PageModel<?> pageModel = (PageModel<?>) o;
+    return totalElements == pageModel.totalElements
+        && totalPages == pageModel.totalPages
+        && numberOfElements == pageModel.numberOfElements
+        && size == pageModel.size
+        && number == pageModel.number
+        && Objects.equals(content, pageModel.content);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(content, totalElements, totalPages, numberOfElements, size, number);
   }
 }

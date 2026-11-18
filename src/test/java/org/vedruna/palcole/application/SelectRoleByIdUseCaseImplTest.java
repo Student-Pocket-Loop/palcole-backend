@@ -1,15 +1,19 @@
 package org.vedruna.palcole.application;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.vedruna.palcole.domain.exception.RoleNotFoundException;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 
@@ -21,18 +25,49 @@ class SelectRoleByIdUseCaseImplTest {
   @InjectMocks private SelectRoleByIdUseCaseImpl selectRoleByIdUseCaseImpl;
 
   @Test
-  void selectRoleById_ReturnsRole() {
-    Role role = new Role();
-    role.setRoleId(1);
-    role.setName("ADMIN");
+  @DisplayName("Test caso de uso selectRoleById Ok")
+  void selectRoleByIdOkTest() {
 
-    when(roleStorage.findRoleById(1)).thenReturn(role);
+    // INPUT
+    Integer roleIdInput = 1;
 
-    Role result = selectRoleByIdUseCaseImpl.selectRoleById(1);
+    // ESPERADO
+    Role roleEsperado = new Role();
+    roleEsperado.setRoleId(1);
+    roleEsperado.setName("ADMIN");
 
-    assertNotNull(result);
-    assertEquals(1, result.getRoleId());
-    assertEquals("ADMIN", result.getName());
-    verify(roleStorage).findRoleById(1);
+    // MOCKS
+    when(roleStorage.findRoleById(roleIdInput)).thenReturn(roleEsperado);
+
+    // EJECUCIÓN
+    Role res = selectRoleByIdUseCaseImpl.selectRoleById(roleIdInput);
+
+    // VALIDACIONES
+    assertAll(
+        () -> {
+          assertNotNull(res);
+          assertEquals(1, res.getRoleId());
+          assertEquals("ADMIN", res.getName());
+        });
+    verify(roleStorage).findRoleById(roleIdInput);
+  }
+
+  @Test
+  @DisplayName("Test caso de uso selectRoleById Ko")
+  void selectRoleByIdKoTest() {
+
+    // INPUT
+    Integer roleIdInput = 99;
+
+    // MOCKS
+    when(roleStorage.findRoleById(roleIdInput)).thenThrow(new RoleNotFoundException(roleIdInput));
+
+    // EJECUCIÓN Y VALIDACIONES
+    RoleNotFoundException ex =
+        assertThrows(
+            RoleNotFoundException.class,
+            () -> selectRoleByIdUseCaseImpl.selectRoleById(roleIdInput));
+
+    assertEquals("No se encuentra el role con id: 99", ex.getMessage());
   }
 }

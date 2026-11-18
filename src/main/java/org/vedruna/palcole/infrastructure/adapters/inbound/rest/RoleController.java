@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +30,7 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.dto.RoleDTO;
 @CrossOrigin
 @AllArgsConstructor
 @Validated
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/v1/roles")
 public class RoleController {
@@ -49,9 +52,10 @@ public class RoleController {
 
   @PostMapping("/")
   public ResponseEntity<RoleDTO> insertIntoRole(@RequestBody @Valid InsertRoleDTO insertRoleDTO) {
-    return ResponseEntity.ok(
-        roleInConverter.toDto(
-            newRoleUseCase.newRole(roleInConverter.toDomainInsert(insertRoleDTO))));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(
+            roleInConverter.toDto(
+                newRoleUseCase.newRole(roleInConverter.toDomainInsert(insertRoleDTO))));
   }
 
   @GetMapping("/{roleId}")
@@ -60,7 +64,7 @@ public class RoleController {
   }
 
   @PutMapping("/{roleId}")
-  public ResponseEntity<RoleDTO> updateStudent(
+  public ResponseEntity<RoleDTO> updateRole(
       @PathVariable Integer roleId, @RequestBody @Valid InsertRoleDTO insertRoleDTO) {
     return ResponseEntity.ok(
         roleInConverter.toDto(
@@ -68,7 +72,7 @@ public class RoleController {
   }
 
   @DeleteMapping("/{roleId}")
-  public ResponseEntity<Void> deleteStudent(@PathVariable Integer roleId) {
+  public ResponseEntity<Void> deleteRole(@PathVariable Integer roleId) {
     deleteRoleUseCase.deleteRole(roleId);
     return ResponseEntity.noContent().build();
   }
