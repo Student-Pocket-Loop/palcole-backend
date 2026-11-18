@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.vedruna.palcole.controller.dto.UserDto;
 import org.vedruna.palcole.controller.dto.authdto.LoginRequestDto;
 import org.vedruna.palcole.controller.dto.authdto.RegisterRequestDto;
-import org.vedruna.palcole.persistance.model.RolEntity;
+import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
 
 class UserConverterTest {
@@ -24,9 +24,9 @@ class UserConverterTest {
 
   @Test
   void testToDto_withValidUserAndRole() {
-    RolEntity role = new RolEntity();
+    RoleEntity role = new RoleEntity();
     role.setUserId(2);
-    role.setRolName("ROLE_USER");
+    role.setName("ROLE_USER");
 
     LocalDateTime now = LocalDateTime.now();
 

@@ -1,0 +1,219 @@
+# =====================================================================
+#  PALCOLE BACKEND - Peticiones que provocan errores controlados
+#  Cada petición indica el código HTTP y el título (ProblemDetail)
+#  que debe devolver el handler correspondiente.
+#
+#  Ejecuta antes LOGIN ADMIN y LOGIN USER para obtener los tokens.
+#  Usuarios de data.sql:  joaquin (ADMIN)  y  manuel (USER)  -> Abcd1234
+# =====================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
+### LOGIN ADMIN
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "joaquin",
+    "password": "Abcd1234"
+}
+
+### LOGIN USER
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "manuel",
+    "password": "Abcd1234"
+}
+
+# =====================================================================
+#  404 NOT FOUND  ->  RoleNotFoundException
+# =====================================================================
+
+### GET BY ID de un role que no existe
+### 404 - "RoleNotFoundException: Role Not Found" - No se encuentra el role con id: 9999
+GET {{baseUrl}}/roles/9999
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcyODQsImV4cCI6MTc5NzYwOTI4NH0.3mkzMCSWJonY4xMBQItmKUhLmYf-aafC5ybZ79Y1c54
+
+### PUT de un role que no existe
+### 404 - "RoleNotFoundException: Role Not Found"
+PUT {{baseUrl}}/roles/9999
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcyODQsImV4cCI6MTc5NzYwOTI4NH0.3mkzMCSWJonY4xMBQItmKUhLmYf-aafC5ybZ79Y1c54
+
+{
+    "name": "FANTASMA"
+}
+
+### DELETE de un role que no existe
+### 404 - "RoleNotFoundException: Role Not Found"
+DELETE {{baseUrl}}/roles/9999
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcyODQsImV4cCI6MTc5NzYwOTI4NH0.3mkzMCSWJonY4xMBQItmKUhLmYf-aafC5ybZ79Y1c54
+
+# =====================================================================
+#  409 CONFLICT  ->  RoleAlreadyExistsException / RoleInUseException /
+#                    DataIntegrityViolationException
+# =====================================================================
+
+### POST con un nombre que ya existe
+### 409 - "RoleAlreadyExistsException: Role Already Exists" - Ya existe un role con el nombre: ADMIN
+POST {{baseUrl}}/roles/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcyODQsImV4cCI6MTc5NzYwOTI4NH0.3mkzMCSWJonY4xMBQItmKUhLmYf-aafC5ybZ79Y1c54
+
+{
+    "name": "ADMIN"
+}
+
+### PUT que renombra el role 2 (USER) con el nombre de otro role (ADMIN)
+### 409 - "RoleAlreadyExistsException: Role Already Exists"
+PUT {{baseUrl}}/roles/2
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "ADMIN"
+}
+
+### DELETE del role 1 (ADMIN), que tiene usuarios asociados
+### 409 - "RoleInUseException: Role In Use" - ... porque tiene usuarios asociados
+DELETE {{baseUrl}}/roles/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### REGISTER con un email que ya existe (manuel@localhost.es, de data.sql)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "otro_manuel",
+    "password": "Abcd1234",
+    "email": "manuel@localhost.es"
+}
+
+# =====================================================================
+#  400 BAD REQUEST  ->  validaciones y peticiones mal formadas
+# =====================================================================
+
+### POST con el nombre vacío
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.name
+POST {{baseUrl}}/roles/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": ""
+}
+
+### POST con el nombre de más de 100 caracteres
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.name
+POST {{baseUrl}}/roles/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}
+
+### POST con JSON mal formado (falta cerrar la llave)
+### 400 - "HttpMessageNotReadableException: Malformed Body"
+POST {{baseUrl}}/roles/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "MODERATOR"
+
+### GET BY ID con un id que no es un número
+### 400 - "MethodArgumentTypeMismatchException: Invalid Argument Type"
+GET {{baseUrl}}/roles/abc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### GET ALL ordenando por una propiedad que no existe
+### 400 - "PropertyReferenceException: Invalid Property Reference" - invalidProperty: inexistente
+GET {{baseUrl}}/roles/?sort=inexistente,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### REGISTER con datos inválidos (username vacío y email sin formato)
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.username y errors.email
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": "Abcd1234",
+    "email": "esto-no-es-un-email"
+}
+
+### REFRESH con un refresh token inválido
+### 400 - "IllegalArgumentException: Invalid Business Argument" - Refresh Token inválido: ...
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "esto.no.es.un.token"
+}
+
+# =====================================================================
+#  401 UNAUTHORIZED  ->  HandlerSecurityExController
+# =====================================================================
+
+### LOGIN con contraseña incorrecta
+### 401 - "BadCredentialsException: Invalid Credentials"
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "joaquin",
+    "password": "contraseña_incorrecta"
+}
+
+### LOGIN con un usuario que no existe
+### 401 - "BadCredentialsException: Invalid Credentials" (o el error de autenticación general)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "no_existe",
+    "password": "Abcd1234"
+}
+
+# =====================================================================
+#  403 FORBIDDEN
+# =====================================================================
+
+### Un usuario con rol USER intenta usar el CRUD de roles (solo ADMIN)
+### 403 - "AccessDeniedException: Access Denied"
+GET {{baseUrl}}/roles/
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+### Un usuario con rol USER intenta entrar en el endpoint de admin
+### 403 - "AccessDeniedException: Access Denied"
+GET {{baseUrl}}/main/admin
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+### Petición a un endpoint protegido SIN token
+### 403 - la corta Spring Security antes de llegar al controlador (no pasa por los handlers)
+GET {{baseUrl}}/roles/
+
+### Petición con un token inválido (el filtro JWT lo ignora y se trata como anónimo)
+### 403 - igual que la anterior: la corta Spring Security
+GET {{baseUrl}}/roles/
+Authorization: Bearer esto.no.es.un.token
+
+# =====================================================================
+#  405 METHOD NOT ALLOWED
+# =====================================================================
+
+### PATCH sobre /roles/{id}, que no está implementado
+### 405 - "HttpRequestMethodNotSupportedException: HTTP Method Not Allowed" - allowedMethods
+PATCH {{baseUrl}}/roles/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "NUEVO"
+}

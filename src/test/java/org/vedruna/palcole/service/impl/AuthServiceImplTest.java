@@ -22,9 +22,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vedruna.palcole.controller.dto.authdto.AuthResponseDto;
-import org.vedruna.palcole.persistance.model.RolEntity;
+import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
-import org.vedruna.palcole.persistance.repository.RolRepository;
+import org.vedruna.palcole.persistance.repository.RoleRepository;
 import org.vedruna.palcole.persistance.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +32,7 @@ class AuthServiceImplTest {
 
   @Mock private UserRepository userRepo;
 
-  @Mock private RolRepository rolRepo;
+  @Mock private RoleRepository rolRepo;
 
   @Mock private JwtServiceImpl jwtService;
 
@@ -93,11 +93,11 @@ class AuthServiceImplTest {
     inputUser.setUsername("newuser");
     inputUser.setPassword("rawPassword");
 
-    RolEntity defaultRole = new RolEntity();
+    RoleEntity defaultRole = new RoleEntity();
     defaultRole.setUserId(2);
-    defaultRole.setRolName("USER");
+    defaultRole.setName("USER");
 
-    when(rolRepo.findByRolName("USER")).thenReturn(Optional.of(defaultRole));
+    when(rolRepo.findByName("USER")).thenReturn(Optional.of(defaultRole));
     when(passwordEncoder.encode("rawPassword")).thenReturn("encodedPassword");
     when(userRepo.save(any(UserEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -112,7 +112,7 @@ class AuthServiceImplTest {
     assertNotNull(savedUser.getAccountExpirationDate());
     assertNotNull(savedUser.getCredentialsExpirationDate());
 
-    verify(rolRepo).findByRolName("USER");
+    verify(rolRepo).findByName("USER");
     verify(passwordEncoder).encode("rawPassword");
     verify(userRepo).save(inputUser);
   }
@@ -122,7 +122,7 @@ class AuthServiceImplTest {
     UserEntity inputUser = new UserEntity();
     inputUser.setUsername("newuser");
 
-    when(rolRepo.findByRolName("USER")).thenReturn(Optional.empty());
+    when(rolRepo.findByName("USER")).thenReturn(Optional.empty());
 
     NoSuchElementException ex =
         assertThrows(NoSuchElementException.class, () -> authService.register(inputUser));

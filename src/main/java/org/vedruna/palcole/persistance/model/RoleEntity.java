@@ -14,15 +14,15 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "roles")
-public class RolEntity {
+public class RoleEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "rol_id")
+  @Column(name = "role_id")
   Integer userId;
 
-  @Column(name = "rol_name")
-  String rolName;
+  @Column(name = "name")
+  String name;
 
   @OneToMany(mappedBy = "userRol", cascade = CascadeType.ALL)
   List<UserEntity> users;

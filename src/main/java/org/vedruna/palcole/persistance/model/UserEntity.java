@@ -38,6 +38,9 @@ public class UserEntity implements UserDetails {
   @Column(name = "password", nullable = false)
   String password;
 
+  @Column(name = "educational_center", nullable = true)
+  String educationalCenter;
+
   @Column(name = "create_date", nullable = false)
   LocalDateTime createDate;
 
@@ -55,19 +58,19 @@ public class UserEntity implements UserDetails {
 
   // IMPORTANTE EAGER para que se cargue el rol en la consulta
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "roles_rol_id", referencedColumnName = "rol_id")
-  RolEntity userRol;
+  @JoinColumn(name = "roles_role_id", referencedColumnName = "role_id")
+  RoleEntity userRol;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     // Si el rol es nulo (aunque esto debería ser prevenido por la lógica de negocio/BD)
-    if (this.userRol == null || this.userRol.getRolName() == null) {
+    if (this.userRol == null || this.userRol.getName() == null) {
       return Collections.emptyList();
     }
 
     // Mapea el nombre del rol a una autoridad de Spring Security
     // Se añade el prefijo "ROLE_" como buena práctica de Spring Security.
-    String authorityName = "ROLE_" + this.userRol.getRolName().toUpperCase();
+    String authorityName = "ROLE_" + this.userRol.getName().toUpperCase();
 
     return List.of(new SimpleGrantedAuthority(authorityName));
   }
