@@ -1,19 +1,20 @@
 package org.vedruna.palcole.domain.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class User {
   private Integer userId;
-  private Integer roleId;
+  private Integer rolesRoleId;
   private String username;
   private String email;
-  private String passwordHash;
+  private String password;
   private String educationalCenter = "Santa Joaquina de Vedruna";
-  private boolean verified = false;
-  private LocalDate registrationDate = LocalDate.now();
-  private LocalDate expirationDate;
-  private boolean active = true;
+  private LocalDateTime createDate = LocalDateTime.now();
+  private LocalDateTime accountExpirationDate;
+  private boolean isLocked = false;
+  private LocalDateTime credentialsExpirationDate;
+  private boolean isEnabled = true;
 
   public User() {}
 
@@ -25,12 +26,12 @@ public class User {
     this.userId = userId;
   }
 
-  public Integer getRoleId() {
-    return roleId;
+  public Integer getRolesRoleId() {
+    return rolesRoleId;
   }
 
-  public void setRoleId(Integer roleId) {
-    this.roleId = roleId;
+  public void setRolesRoleId(Integer rolesRoleId) {
+    this.rolesRoleId = rolesRoleId;
   }
 
   public String getUsername() {
@@ -49,12 +50,12 @@ public class User {
     this.email = email;
   }
 
-  public String getPasswordHash() {
-    return passwordHash;
+  public String getPassword() {
+    return password;
   }
 
-  public void setPasswordHash(String passwordHash) {
-    this.passwordHash = passwordHash;
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public String getEducationalCenter() {
@@ -65,36 +66,44 @@ public class User {
     this.educationalCenter = educationalCenter;
   }
 
-  public boolean isVerified() {
-    return verified;
+  public LocalDateTime getCreateDate() {
+    return createDate;
   }
 
-  public void setVerified(boolean verified) {
-    this.verified = verified;
+  public void setCreateDate(LocalDateTime createDate) {
+    this.createDate = createDate;
   }
 
-  public LocalDate getRegistrationDate() {
-    return registrationDate;
+  public LocalDateTime getAccountExpirationDate() {
+    return accountExpirationDate;
   }
 
-  public void setRegistrationDate(LocalDate registrationDate) {
-    this.registrationDate = registrationDate;
+  public void setAccountExpirationDate(LocalDateTime accountExpirationDate) {
+    this.accountExpirationDate = accountExpirationDate;
   }
 
-  public LocalDate getExpirationDate() {
-    return expirationDate;
+  public boolean isLocked() {
+    return isLocked;
   }
 
-  public void setExpirationDate(LocalDate expirationDate) {
-    this.expirationDate = expirationDate;
+  public void setLocked(boolean locked) {
+    isLocked = locked;
   }
 
-  public boolean isActive() {
-    return active;
+  public LocalDateTime getCredentialsExpirationDate() {
+    return credentialsExpirationDate;
   }
 
-  public void setActive(boolean active) {
-    this.active = active;
+  public void setCredentialsExpirationDate(LocalDateTime credentialsExpirationDate) {
+    this.credentialsExpirationDate = credentialsExpirationDate;
+  }
+
+  public boolean isEnabled() {
+    return isEnabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    isEnabled = enabled;
   }
 
   @Override
@@ -102,30 +111,32 @@ public class User {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
-    return verified == user.verified
-        && active == user.active
+    return isLocked == user.isLocked
+        && isEnabled == user.isEnabled
         && Objects.equals(userId, user.userId)
-        && Objects.equals(roleId, user.roleId)
+        && Objects.equals(rolesRoleId, user.rolesRoleId)
         && Objects.equals(username, user.username)
         && Objects.equals(email, user.email)
-        && Objects.equals(passwordHash, user.passwordHash)
+        && Objects.equals(password, user.password)
         && Objects.equals(educationalCenter, user.educationalCenter)
-        && Objects.equals(registrationDate, user.registrationDate)
-        && Objects.equals(expirationDate, user.expirationDate);
+        && Objects.equals(createDate, user.createDate)
+        && Objects.equals(accountExpirationDate, user.accountExpirationDate)
+        && Objects.equals(credentialsExpirationDate, user.credentialsExpirationDate);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
         userId,
-        roleId,
+        rolesRoleId,
         username,
         email,
-        passwordHash,
+        password,
         educationalCenter,
-        verified,
-        registrationDate,
-        expirationDate,
-        active);
+        createDate,
+        accountExpirationDate,
+        isLocked,
+        credentialsExpirationDate,
+        isEnabled);
   }
 }

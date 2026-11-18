@@ -24,8 +24,8 @@ import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.UpdateRoleUseCase;
 import org.vedruna.palcole.infrastructure.adapters.inbound.converter.RoleInConverter;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.InsertRoleDTO;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.RoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.InsertRoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.RoleDTO;
 
 @CrossOrigin
 @AllArgsConstructor
