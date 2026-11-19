@@ -23,12 +23,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.infrastructure.RoleStorageImpl;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.RoleOutConverter;
-import org.vedruna.palcole.infrastructure.adapters.outbound.exception.RoleNotFoundException;
 import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.repository.RoleRepository;
 
@@ -156,7 +156,7 @@ class RoleStorageImplTest {
     RoleNotFoundException ex =
         assertThrows(RoleNotFoundException.class, () -> roleStorageImpl.findRoleById(roleIdInput));
 
-    assertEquals("No se encuentra alumno con id: 99", ex.getMessage());
+    assertEquals("No se encuentra el role con id: 99", ex.getMessage());
     verify(roleOutConverter, never()).toDomain(any(RoleEntity.class));
   }
 
@@ -209,7 +209,7 @@ class RoleStorageImplTest {
             RoleNotFoundException.class,
             () -> roleStorageImpl.updateRole(roleIdInput, newRoleInput));
 
-    assertEquals("No se encuentra role con id: 99", ex.getMessage());
+    assertEquals("No se encuentra el role con id: 99", ex.getMessage());
     verify(roleRepository, never()).save(any(RoleEntity.class));
     verify(roleOutConverter, never()).toDomain(any(RoleEntity.class));
   }
@@ -300,7 +300,7 @@ class RoleStorageImplTest {
     RoleNotFoundException ex =
         assertThrows(RoleNotFoundException.class, () -> roleStorageImpl.deleteRole(roleIdInput));
 
-    assertEquals("No se encuentra role con id: 99", ex.getMessage());
+    assertEquals("No se encuentra el role con id: 99", ex.getMessage());
     verify(roleRepository, never()).deleteById(any());
   }
 }

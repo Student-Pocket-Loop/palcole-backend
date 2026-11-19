@@ -85,9 +85,9 @@ public class UserStorageImpl implements UserStorage {
     userEntity.setUserRol(findRole(roleId));
 
     LocalDateTime neverExpires = LocalDateTime.of(2999, 12, 31, 23, 59, 59);
-    
+
     userEntity.setCreateDate(LocalDateTime.now());
-    userEntity.setAccountExpirationDate(neverExpires);     // Opcional, para que no quede NULL
+    userEntity.setAccountExpirationDate(neverExpires); // Opcional, para que no quede NULL
     userEntity.setCredentialsExpirationDate(neverExpires);
 
     return userOutConverter.toDomain(userRepository.save(userEntity));

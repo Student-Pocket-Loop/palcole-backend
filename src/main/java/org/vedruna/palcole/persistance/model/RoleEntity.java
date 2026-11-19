@@ -1,6 +1,5 @@
 package org.vedruna.palcole.persistance.model;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +23,6 @@ public class RoleEntity {
   @Column(name = "name")
   String name;
 
-  @OneToMany(mappedBy = "userRol", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "userRol")
   List<UserEntity> users;
 }

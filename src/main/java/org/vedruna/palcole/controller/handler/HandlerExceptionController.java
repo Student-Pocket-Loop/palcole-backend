@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.vedruna.palcole.domain.exception.ResourceAlreadyExistsException;
+import org.vedruna.palcole.domain.exception.ResourceNotFoundException;
 import org.vedruna.palcole.persistance.exception.UserNotFoundException;
 
 /**
@@ -180,6 +182,49 @@ public class HandlerExceptionController extends ResponseEntityExceptionHandler {
     // Devolvemos la respuesta con el ProblemDetail y el estado NOT FOUND.
     return handleExceptionInternal(
         ex, problemDetail, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+  }
+
+  /**
+   * Maneja cualquier excepción de dominio que extienda {@code ResourceNotFoundException}
+   * (RoleNotFoundException, CategoryNotFoundException, ...). Genera una respuesta 404 Not Found.
+   *
+   * @param ex La excepción {@code ResourceNotFoundException} (o una subclase).
+   * @param request La solicitud web actual.
+   * @return {@code ResponseEntity} con el estado 404 y el mensaje de la excepción.
+   */
+  @ExceptionHandler(ResourceNotFoundException.class)
+  protected ResponseEntity<Object> handleResourceNotFound(
+      ResourceNotFoundException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.NOT_FOUND,
+            ex.getMessage() != null ? ex.getMessage() : "The requested resource was not found.");
+    // El título incluye el nombre de la subclase para saber qué recurso falta.
+    problemDetail.setTitle(ex.getClass().getSimpleName() + ": Resource Not Found");
+    log.warn("Resource Not Found Exception (404): {}", ex.getMessage());
+    return handleExceptionInternal(
+        ex, problemDetail, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+  }
+
+  /**
+   * Maneja cualquier excepción de dominio que extienda {@code ResourceAlreadyExistsException} (por
+   * ejemplo, intentar marcar como favorito algo que ya lo es). Genera una respuesta 409 Conflict.
+   *
+   * @param ex La excepción {@code ResourceAlreadyExistsException} (o una subclase).
+   * @param request La solicitud web actual.
+   * @return {@code ResponseEntity} con el estado 409 y el mensaje de la excepción.
+   */
+  @ExceptionHandler(ResourceAlreadyExistsException.class)
+  protected ResponseEntity<Object> handleResourceAlreadyExists(
+      ResourceAlreadyExistsException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.CONFLICT,
+            ex.getMessage() != null ? ex.getMessage() : "The resource already exists.");
+    problemDetail.setTitle(ex.getClass().getSimpleName() + ": Resource Already Exists");
+    log.warn("Resource Already Exists Exception (409): {}", ex.getMessage());
+    return handleExceptionInternal(
+        ex, problemDetail, new HttpHeaders(), HttpStatus.CONFLICT, request);
   }
 
   /**

@@ -1,5 +1,7 @@
 package org.vedruna.palcole.domain.model;
 
+import java.util.Objects;
+
 public class Category {
   private Integer categoryId;
   private String name;
@@ -20,5 +22,18 @@ public class Category {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Category that = (Category) o;
+    return Objects.equals(categoryId, that.categoryId) && Objects.equals(name, that.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(categoryId, name);
   }
 }
