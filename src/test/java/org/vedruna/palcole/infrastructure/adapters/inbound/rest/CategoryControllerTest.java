@@ -39,7 +39,6 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.converter.CategoryInC
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.categories.CategoryDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.categories.InsertCategoryDTO;
 
-
 @ExtendWith(MockitoExtension.class)
 class CategoryControllerTest {
 

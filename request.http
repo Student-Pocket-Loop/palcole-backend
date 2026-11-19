@@ -1,5 +1,14 @@
+# =====================================================================
+#  PALCOLE BACKEND - Peticiones de ejemplo (REST Client / IntelliJ HTTP)
+#  Ejecuta primero LOGIN ADMIN (y LOGIN USER si pruebas con ese rol).
+#  El token se reutiliza solo: {{loginAdmin.response.body.$.access_token}}
+#  Datos de ejemplo en src/main/resources/db/mysql/data.sql
+# =====================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
 ### REGISTER
-POST http://localhost:8080/api/v1/auth/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -8,17 +17,9 @@ Content-Type: application/json
     "email": "joaquin@localhost.com"
 }
 
-### LOGIN USER
-POST http://localhost:8080/api/v1/auth/login
-Content-Type: application/json
-
-{
-    "username": "manuel",
-    "password": "Abcd1234"
-}
-
 ### LOGIN ADMIN
-POST http://localhost:8080/api/v1/auth/login
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -26,92 +27,158 @@ Content-Type: application/json
     "password": "Abcd1234"
 }
 
-### REFRESH
-POST http://localhost:8080/api/v1/auth/refresh
+### LOGIN USER
+# @name loginUser
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc5NDMzOTU5MSwiZXhwIjoxNzk0OTQ0MzkxfQ.5vwA5KdIRSnlOCRQZqXUvpwr2P0VNIEHJdCp5Hjpcw8"
+    "username": "manuel",
+    "password": "Abcd1234"
+}
+
+### REFRESH
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "{{loginAdmin.response.body.$.refresh_token}}"
 }
 
 ### PUBLIC
-GET http://localhost:8080/api/v1/main/public
+GET {{baseUrl}}/main/public
 
 ### PRIVATE
-GET http://localhost:8080/api/v1/main/private
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+GET {{baseUrl}}/main/private
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
-### PROTECTED
-GET http://localhost:8080/api/v1/main/admin
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
+### PROTECTED (solo ADMIN)
+GET {{baseUrl}}/main/admin
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
-### ME 
-GET http://localhost:8080/api/v1/auth/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im1hbnVlbEBsb2NhbGhvc3QuZXMiLCJzdWIiOiJtYW51ZWwiLCJpYXQiOjE3OTQ5MzkxMzIsImV4cCI6MTc5NzUzMTEzMn0.MVyNT4TqJAM3MR4q6KmC6ULacy92C97MyIj7kuL4Org
-### GET ALL
-GET http://localhost:8080/api/v1/roles/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+### ME
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
-### GET BY ID
-GET http://localhost:8080/api/v1/roles/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+# =====================================================================
+#  ROLES (solo ADMIN)
+# =====================================================================
 
-### POST
-POST http://localhost:8080/api/v1/roles/
+### ROLES (solo ADMIN) - GET ALL
+GET {{baseUrl}}/roles/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/roles/?page=0&size=5&sort=name,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - GET BY ID
+GET {{baseUrl}}/roles/2
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - POST
+POST {{baseUrl}}/roles/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 {
     "name": "NUEVO"
 }
 
-### PUT
-PUT http://localhost:8080/api/v1/roles/2
+### ROLES (solo ADMIN) - PUT
+PUT {{baseUrl}}/roles/3
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 {
-    "name": "NUEVO"
+    "name": "ANTIGUO"
 }
 
-### DELETE
-DELETE http://localhost:8080/api/v1/roles/3
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+### ROLES (solo ADMIN) - DELETE
+DELETE {{baseUrl}}/roles/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
-### GET ALL USERS
-GET http://localhost:8080/api/v1/users/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+# =====================================================================
+#  USERS (solo ADMIN)
+# =====================================================================
 
-### GET ALL USERS (PAGINADO)
-GET http://localhost:8080/api/v1/users/?page=0&size=10&sort=userId,asc
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+### USERS (solo ADMIN) - GET ALL
+GET {{baseUrl}}/users/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
-### GET USER BY ID
-GET http://localhost:8080/api/v1/users/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+### USERS (solo ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/users/?page=0&size=5&sort=username,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
-### POST USER
-POST http://localhost:8080/api/v1/users/
+### USERS (solo ADMIN) - GET BY ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### USERS (solo ADMIN) - POST
+POST {{baseUrl}}/users/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 {
-    "username": "nuevo.usuario",
-    "email": "nuevo.usuario@localhost.es",
-    "password": "Abcd1234"
+    "username": "alumno1",
+    "email": "alumno1@localhost.es",
+    "password": "Abcd1234",
+    "educationalCenter": "Santa Joaquina de Vedruna"
 }
 
-### PUT USER
-PUT http://localhost:8080/api/v1/users/3
+### USERS (solo ADMIN) - PUT
+PUT {{baseUrl}}/users/3
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 {
-    "username": "usuario.actualizado",
-    "email": "usuario.actualizado@localhost.es",
-    "password": "Abcd1234"
+    "roleId": 2,
+    "username": "alumno1_editado",
+    "email": "alumno1@localhost.es",
+    "password": "Abcd1234",
+    "educationalCenter": "Santa Joaquina de Vedruna",
+    "isLocked": false,
+    "isEnabled": true
 }
 
-### DELETE USER
-DELETE http://localhost:8080/api/v1/users/3
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdC5lcyIsInN1YiI6ImpvYXF1aW4iLCJpYXQiOjE3OTUwMTcxODEsImV4cCI6MTc5NzYwOTE4MX0.aUVg7PecPHPrGCDEknKJ6BLd63y_bSM8XqpU2u-AFc0
+### USERS (solo ADMIN) - DELETE
+DELETE {{baseUrl}}/users/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  CATEGORIES (lectura: cualquier usuario; escritura: ADMIN)
+# =====================================================================
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET ALL
+GET {{baseUrl}}/categories/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/categories/?page=0&size=5&sort=name,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET BY ID
+GET {{baseUrl}}/categories/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - POST
+POST {{baseUrl}}/categories/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "Idiomas"
+}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - PUT
+PUT {{baseUrl}}/categories/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "Idiomas y diccionarios"
+}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - DELETE
+DELETE {{baseUrl}}/categories/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
