@@ -1,4 +1,4 @@
-package org.vedruna.palcole.domain.exception.user;
+package org.vedruna.palcole.domain.exception.users;
 
 import java.util.NoSuchElementException;
 

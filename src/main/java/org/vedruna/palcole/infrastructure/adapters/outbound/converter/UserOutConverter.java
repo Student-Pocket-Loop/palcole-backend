@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +14,11 @@ import org.vedruna.palcole.persistance.model.UserEntity;
 @Mapper(componentModel = "spring")
 public interface UserOutConverter {
 
+  @Mapping(source = "userRol.userId", target = "rolesRoleId")
   User toDomain(UserEntity userEntity);
 
+  @Mapping(target = "userRol", ignore = true)
+  @Mapping(target = "authorities", ignore = true)
   UserEntity toEntity(User user);
 
   /** Convierte el modelo de paginación del dominio al objeto Pageable de Spring Data. */

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
+import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
 
 class UserOutConverterTest {
@@ -37,8 +38,12 @@ class UserOutConverterTest {
   }
 
   private UserEntity crearUserEntity(Integer userId, String username, LocalDateTime fechaFija) {
+    RoleEntity role = new RoleEntity();
+    role.setUserId(1);
+
     UserEntity entity = new UserEntity();
     entity.setUserId(userId);
+    entity.setUserRol(role);
     entity.setUsername(username);
     entity.setEmail(username.toLowerCase() + "@vedruna.org");
     entity.setPassword("password123");
@@ -102,6 +107,7 @@ class UserOutConverterTest {
 
     // ESPERADO
     UserEntity userEntityEsperado = crearUserEntity(1, "admin", fechaFija);
+    userEntityEsperado.setUserRol(null);
 
     // EJECUCIÓN
     UserEntity res = userOutConverter.toEntity(userInput);
@@ -227,9 +233,7 @@ class UserOutConverterTest {
     // ESPERADO
     PageModel<User> pageModelEsperado =
         new PageModel<>(
-            List.of(
-                crearUser(1, "admin", fechaFija),
-                crearUser(2, "juan.perez", fechaFija)),
+            List.of(crearUser(1, "admin", fechaFija), crearUser(2, "juan.perez", fechaFija)),
             2,
             1,
             2,

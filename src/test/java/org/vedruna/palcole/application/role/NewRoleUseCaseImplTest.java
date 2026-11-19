@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.vedruna.palcole.domain.exception.role.RoleAlreadyExistsException;
+import org.vedruna.palcole.domain.exception.roles.RoleAlreadyExistsException;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 

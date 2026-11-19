@@ -91,7 +91,7 @@ class UserInConverterTest {
         () -> {
           assertNotNull(res);
           assertNull(res.getUserId());
-          assertEquals(1, res.getRolesRoleId());
+          assertNull(res.getRolesRoleId());
           assertEquals("juan.perez", res.getUsername());
           assertEquals("juan.perez@vedruna.org", res.getEmail());
         });

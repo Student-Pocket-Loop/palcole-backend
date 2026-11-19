@@ -19,4 +19,8 @@ public class UserNotFoundException extends NoSuchElementException {
   public UserNotFoundException() {
     super("User not found");
   }
+
+  public UserNotFoundException(Integer userId) {
+    super("No se encuentra el usuario con id: " + userId);
+  }
 }

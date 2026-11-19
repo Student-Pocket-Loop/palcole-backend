@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.inbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +18,15 @@ public interface UserInConverter {
 
   User toDomain(UserDTO insertUserDto);
 
-  User toDomainInsert(InsertUserDTO insertUserDTO);
+  @Mapping(target = "userId", ignore = true)
+  @Mapping(target = "rolesRoleId", ignore = true)
+  @Mapping(target = "educationalCenter", ignore = true)
+  @Mapping(target = "createDate", ignore = true)
+  @Mapping(target = "accountExpirationDate", ignore = true)
+  @Mapping(target = "isLocked", ignore = true)
+  @Mapping(target = "credentialsExpirationDate", ignore = true)
+  @Mapping(target = "isEnabled", ignore = true)
+  User toDomainInsert(InsertUserDTO insertUserDto);
 
   UserDTO toDto(User user);
 
@@ -27,10 +36,9 @@ public interface UserInConverter {
   }
 
   public default Page<UserDTO> toUsersPage(PageModel<User> pageModel, PageableModel pageableModel) {
-    // CREAMOS EL PAGEABLE
     PageRequest pr;
     if (pageableModel.getSort().equalsIgnoreCase("UNSORTED")) {
-      pr = PageRequest.of(pageModel.getNumber(), pageModel.getSize());
+      pr = PageRequest.of(pageableModel.getPage(), pageableModel.getSize());
     } else {
       String[] sort = pageableModel.getSort().split(": ");
       pr =
@@ -41,7 +49,7 @@ public interface UserInConverter {
                   ? Sort.by(sort[0]).ascending()
                   : Sort.by(sort[0]).descending());
     }
-    // CREAMOS EL PAGE
+
     return new PageImpl<>(
         pageModel.getContent().stream().map(this::toDto).toList(),
         pr,

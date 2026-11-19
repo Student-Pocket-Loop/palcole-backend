@@ -1,12 +1,11 @@
 package org.vedruna.palcole.infrastructure.adapters.inbound.dto.user;
 
 import java.time.LocalDateTime;
-
 import lombok.Data;
 
 @Data
 public class UserDTO {
-  
+
   Integer userId;
   Integer rolesRoleId;
   String username;
@@ -18,5 +17,4 @@ public class UserDTO {
   Boolean isLocked;
   LocalDateTime credentialsExpirationDate;
   Boolean isEnabled;
-
 }

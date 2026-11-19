@@ -1,6 +1,6 @@
-package org.vedruna.palcole.domain.exception.role;
+package org.vedruna.palcole.domain.exception.roles;
 
-import java.util.NoSuchElementException;
+import org.vedruna.palcole.domain.exception.ResourceNotFoundException;
 
 /**
  * Excepción de dominio que indica que el role solicitado no existe.
@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * <p>Pertenece al dominio (no depende de ningún framework), así que la pueden lanzar tanto los
  * casos de uso como los adaptadores que implementan los puertos de salida.
  */
-public class RoleNotFoundException extends NoSuchElementException {
+public class RoleNotFoundException extends ResourceNotFoundException {
 
   public RoleNotFoundException(Integer roleId) {
     super("No se encuentra el role con id: " + roleId);

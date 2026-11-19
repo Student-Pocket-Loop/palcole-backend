@@ -13,12 +13,11 @@ public class InsertUserDTO {
   String username;
 
   @Email
-  @NotBlank (message = "El email no puede estar vacio")
+  @NotBlank(message = "El email no puede estar vacio")
   @Size(max = 150, message = "El email no puede superar los 150 caracteres")
   String email;
 
-  @NotBlank (message = "La contraseña no puede estar vacio")
+  @NotBlank(message = "La contraseña no puede estar vacio")
   @Size(max = 255, message = "La contraseña no puede superar los 255 caracteres")
   String password;
-
 }

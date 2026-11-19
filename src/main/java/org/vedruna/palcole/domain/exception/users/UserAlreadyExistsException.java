@@ -1,4 +1,4 @@
-package org.vedruna.palcole.domain.exception.user;
+package org.vedruna.palcole.domain.exception.users;
 
 /**
  * - Excepción de dominio que indica que ya existe un usuario con el mismo nombre de usuario. Regla

@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.vedruna.palcole.application.User.NewUserUseCaseImpl;
-import org.vedruna.palcole.domain.exception.user.UserAlreadyExistsException;
+import org.vedruna.palcole.domain.exception.users.UserAlreadyExistsException;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 

@@ -82,11 +82,11 @@ public class User {
     this.accountExpirationDate = accountExpirationDate;
   }
 
-  public boolean isLocked() {
+  public boolean getIsLocked() {
     return isLocked;
   }
 
-  public void setLocked(boolean locked) {
+  public void setIsLocked(boolean locked) {
     isLocked = locked;
   }
 
@@ -98,11 +98,11 @@ public class User {
     this.credentialsExpirationDate = credentialsExpirationDate;
   }
 
-  public boolean isEnabled() {
+  public boolean getIsEnabled() {
     return isEnabled;
   }
 
-  public void setEnabled(boolean enabled) {
+  public void setIsEnabled(boolean enabled) {
     isEnabled = enabled;
   }
 
