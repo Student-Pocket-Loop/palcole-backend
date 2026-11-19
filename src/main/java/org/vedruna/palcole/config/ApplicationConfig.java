@@ -17,11 +17,21 @@ import org.vedruna.palcole.application.User.NewUserUseCaseImpl;
 import org.vedruna.palcole.application.User.SelectAllUsersUseCaseImpl;
 import org.vedruna.palcole.application.User.SelectUserByIdUseCaseImpl;
 import org.vedruna.palcole.application.User.UpdateUserUseCaseImpl;
+import org.vedruna.palcole.application.categories.DeleteCategoryUseCaseImpl;
+import org.vedruna.palcole.application.categories.NewCategoryUseCaseImpl;
+import org.vedruna.palcole.application.categories.SelectAllCategoriesUseCaseImpl;
+import org.vedruna.palcole.application.categories.SelectCategoryByIdUseCaseImpl;
+import org.vedruna.palcole.application.categories.UpdateCategoryUseCaseImpl;
 import org.vedruna.palcole.application.role.DeleteRoleUseCaseImpl;
 import org.vedruna.palcole.application.role.NewRoleUseCaseImpl;
 import org.vedruna.palcole.application.role.SelectAllRolesUseCaseImpl;
 import org.vedruna.palcole.application.role.SelectRoleByIdUseCaseImpl;
 import org.vedruna.palcole.application.role.UpdateRoleUseCaseImpl;
+import org.vedruna.palcole.domain.ports.inbound.categories.DeleteCategoryUseCase;
+import org.vedruna.palcole.domain.ports.inbound.categories.NewCategoryUseCase;
+import org.vedruna.palcole.domain.ports.inbound.categories.SelectAllCategoriesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.categories.SelectCategoryByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.categories.UpdateCategoryUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
@@ -32,6 +42,7 @@ import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
+import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 import org.vedruna.palcole.persistance.repository.UserRepository;
@@ -170,4 +181,31 @@ public class ApplicationConfig {
   UpdateUserUseCase getUpdateUserUseCase(UserStorage userStorage) {
     return new UpdateUserUseCaseImpl(userStorage);
   }
+
+  @Bean
+  NewCategoryUseCase getNewCategoryUseCase(CategoryStorage categoryStorage) {
+    return new NewCategoryUseCaseImpl(categoryStorage);
+  }
+
+  @Bean
+  SelectAllCategoriesUseCase getSelectAllCategoriesUseCase(CategoryStorage categoryStorage) {
+    return new SelectAllCategoriesUseCaseImpl(categoryStorage);
+  }
+
+  @Bean
+  SelectCategoryByIdUseCase getSelectCategoryByIdUseCase(CategoryStorage categoryStorage) {
+    return new SelectCategoryByIdUseCaseImpl(categoryStorage);
+  }
+
+  @Bean
+  UpdateCategoryUseCase getUpdateCategoryUseCase(CategoryStorage categoryStorage) {
+    return new UpdateCategoryUseCaseImpl(categoryStorage);
+  }
+
+  @Bean
+  DeleteCategoryUseCase getDeleteCategoryUseCase(CategoryStorage categoryStorage) {
+    return new DeleteCategoryUseCaseImpl(categoryStorage);
+  }
+
+
 }
