@@ -217,3 +217,135 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 {
     "name": "NUEVO"
 }
+
+# =====================================================================
+#  PALCOLE BACKEND - Peticiones que provocan errores controlados (Users)
+#  Cada petición indica el código HTTP y el título (ProblemDetail)
+#  que debe devolver el handler correspondiente.
+#
+#  Ejecuta antes LOGIN ADMIN y LOGIN USER para obtener los tokens.
+#  Usuarios de data.sql:  joaquin (ADMIN)  y  manuel (USER)  -> Abcd1234
+# =====================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
+### LOGIN ADMIN
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "joaquin",
+    "password": "Abcd1234"
+}
+
+### LOGIN USER
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "manuel",
+    "password": "Abcd1234"
+}
+
+# =====================================================================
+#  404 NOT FOUND  ->  UserNotFoundException / RoleNotFoundException
+# =====================================================================
+
+### GET BY ID de un usuario que no existe
+### 404 - "UserNotFoundException: User Not Found" - No se encuentra el usuario con id: 9999
+GET {{baseUrl}}/users/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PUT de un usuario que no existe
+### 404 - "UserNotFoundException: User Not Found" - No se encuentra el usuario con id: 9999
+PUT {{baseUrl}}/users/9999
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "fantasma",
+    "email": "fantasma@localhost.es",
+    "password": "Abcd1234"
+}
+
+### PUT asignando un role que no existe al usuario 2 (manuel)
+### 404 - "RoleNotFoundException: Role Not Found" - No se encuentra el role con id: 9999
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "manuel",
+    "email": "manuel@localhost.es",
+    "password": "Abcd1234",
+    "rolesRoleId": 9999
+}
+
+### DELETE de un usuario que no existe
+### 404 - "UserNotFoundException: User Not Found" - No se encuentra el usuario con id: 9999
+DELETE {{baseUrl}}/users/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  409 CONFLICT  ->  DataIntegrityViolationException / UserAlreadyExistsException
+# =====================================================================
+
+### POST con un username que ya existe (joaquin, de data.sql)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+POST {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "joaquin",
+    "email": "nuevo.correo@localhost.es",
+    "password": "Abcd1234"
+}
+
+### POST con un email que ya existe (manuel@localhost.es, de data.sql)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+POST {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "otro_manuel",
+    "email": "manuel@localhost.es",
+    "password": "Abcd1234"
+}
+
+### PUT que renombra el usuario 2 (manuel) con el username de otro usuario (joaquin)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "joaquin",
+    "email": "manuel@localhost.es",
+    "password": "Abcd1234"
+}
+
+### PUT que cambia el email del usuario 2 (manuel) por el de otro usuario (admin@localhost.es)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "manuel",
+    "email": "admin@localhost.es",
+    "password": "Abcd1234"
+}
+
+# =====================================================================
+#  400 BAD REQUEST  ->  validaciones y peticiones mal formadas
+# =====================================================================
+
+### POST con username vacío, email sin formato y password vacía
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.username, errors.email, errors.password
+POST {{baseUrl}}/users/
+Content-Type: application/json
+Authorization:
