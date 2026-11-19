@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.domain.ports.inbound.DeleteRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.NewRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectAllRolesUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
-import org.vedruna.palcole.domain.ports.inbound.UpdateRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.UpdateRoleUseCase;
 import org.vedruna.palcole.infrastructure.adapters.inbound.converter.RoleInConverter;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.InsertRoleDTO;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.RoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.InsertRoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.RoleDTO;
 
 @CrossOrigin
 @AllArgsConstructor

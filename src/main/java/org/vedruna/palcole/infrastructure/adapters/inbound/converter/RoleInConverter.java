@@ -10,8 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.InsertRoleDTO;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.RoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.InsertRoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.RoleDTO;
 
 @Mapper(componentModel = "spring")
 public interface RoleInConverter {

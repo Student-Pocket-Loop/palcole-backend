@@ -12,17 +12,28 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.vedruna.palcole.application.DeleteRoleUseCaseImpl;
-import org.vedruna.palcole.application.NewRoleUseCaseImpl;
-import org.vedruna.palcole.application.SelectAllRolesUseCaseImpl;
-import org.vedruna.palcole.application.SelectRoleByIdUseCaseImpl;
-import org.vedruna.palcole.application.UpdateRoleUseCaseImpl;
-import org.vedruna.palcole.domain.ports.inbound.DeleteRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.NewRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectAllRolesUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
-import org.vedruna.palcole.domain.ports.inbound.UpdateRoleUseCase;
+import org.vedruna.palcole.application.User.DeleteUserUseCaseImpl;
+import org.vedruna.palcole.application.User.NewUserUseCaseImpl;
+import org.vedruna.palcole.application.User.SelectAllUsersUseCaseImpl;
+import org.vedruna.palcole.application.User.SelectUserByIdUseCaseImpl;
+import org.vedruna.palcole.application.User.UpdateUserUseCaseImpl;
+import org.vedruna.palcole.application.role.DeleteRoleUseCaseImpl;
+import org.vedruna.palcole.application.role.NewRoleUseCaseImpl;
+import org.vedruna.palcole.application.role.SelectAllRolesUseCaseImpl;
+import org.vedruna.palcole.application.role.SelectRoleByIdUseCaseImpl;
+import org.vedruna.palcole.application.role.UpdateRoleUseCaseImpl;
+import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.UpdateRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.DeleteUserUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
+import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 import org.vedruna.palcole.persistance.repository.UserRepository;
 
 /**
@@ -133,5 +144,30 @@ public class ApplicationConfig {
   @Bean
   UpdateRoleUseCase getUpdateRoleUseCase(RoleStorage roleStorage) {
     return new UpdateRoleUseCaseImpl(roleStorage);
+  }
+
+  @Bean
+  NewUserUseCase getNewUserUseCase(UserStorage userStorage) {
+    return new NewUserUseCaseImpl(userStorage);
+  }
+
+  @Bean
+  SelectAllUsersUseCase getSelectAllUsersUseCase(UserStorage userStorage) {
+    return new SelectAllUsersUseCaseImpl(userStorage);
+  }
+
+  @Bean
+  DeleteUserUseCase getDeleteUserUseCase(UserStorage userStorage) {
+    return new DeleteUserUseCaseImpl(userStorage);
+  }
+
+  @Bean
+  SelectUserByIdUseCase getSelectUserByIdUseCase(UserStorage userStorage) {
+    return new SelectUserByIdUseCaseImpl(userStorage);
+  }
+
+  @Bean
+  UpdateUserUseCase getUpdateUserUseCase(UserStorage userStorage) {
+    return new UpdateUserUseCaseImpl(userStorage);
   }
 }

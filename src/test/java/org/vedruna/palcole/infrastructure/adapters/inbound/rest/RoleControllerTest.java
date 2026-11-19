@@ -25,19 +25,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.vedruna.palcole.domain.exception.RoleAlreadyExistsException;
-import org.vedruna.palcole.domain.exception.RoleNotFoundException;
+import org.vedruna.palcole.domain.exception.roles.RoleAlreadyExistsException;
+import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.domain.ports.inbound.DeleteRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.NewRoleUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectAllRolesUseCase;
-import org.vedruna.palcole.domain.ports.inbound.SelectRoleByIdUseCase;
-import org.vedruna.palcole.domain.ports.inbound.UpdateRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.role.UpdateRoleUseCase;
 import org.vedruna.palcole.infrastructure.adapters.inbound.converter.RoleInConverter;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.InsertRoleDTO;
-import org.vedruna.palcole.infrastructure.adapters.inbound.dto.RoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.InsertRoleDTO;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.role.RoleDTO;
 
 @ExtendWith(MockitoExtension.class)
 class RoleControllerTest {
