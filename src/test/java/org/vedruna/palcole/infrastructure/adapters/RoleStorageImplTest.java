@@ -23,12 +23,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
 import org.vedruna.palcole.domain.model.Role;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.infrastructure.RoleStorageImpl;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.RoleOutConverter;
-import org.vedruna.palcole.infrastructure.adapters.outbound.exception.RoleNotFoundException;
 import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.repository.RoleRepository;
 
