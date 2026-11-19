@@ -206,6 +206,4 @@ public class ApplicationConfig {
   DeleteCategoryUseCase getDeleteCategoryUseCase(CategoryStorage categoryStorage) {
     return new DeleteCategoryUseCaseImpl(categoryStorage);
   }
-
-
 }
