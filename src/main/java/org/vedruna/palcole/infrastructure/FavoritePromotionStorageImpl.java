@@ -15,7 +15,6 @@ import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoriteProm
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.FavoritePromotionEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.FavoritePromotionRepository;
 
-
 @Component
 @AllArgsConstructor
 public class FavoritePromotionStorageImpl implements FavoritePromotionStorage {

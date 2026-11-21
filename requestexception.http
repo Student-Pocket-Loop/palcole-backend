@@ -86,6 +86,12 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 DELETE {{baseUrl}}/academic-items/9999
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
+### GET BY ID de una conversación que no existe
+### 404 - "ConversationNotFoundException: Resource Not Found"
+GET {{baseUrl}}/conversations/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+
 # =====================================================================
 #  409 CONFLICT
 # =====================================================================

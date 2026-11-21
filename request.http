@@ -287,3 +287,33 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 ### ACADEMIC ITEMS (cualquier usuario autenticado) - DELETE
 DELETE {{baseUrl}}/academic-items/1
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT)
+# =====================================================================
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET ALL
+GET {{baseUrl}}/conversations/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/conversations/?page=0&size=5&sort=conversationId,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET BY ID
+GET {{baseUrl}}/conversations/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - POST
+POST {{baseUrl}}/conversations/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "itemId": 1,
+    "buyerId": 1
+}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - DELETE
+DELETE {{baseUrl}}/conversations/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}

@@ -25,7 +25,6 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.converter.Conversatio
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.conversations.ConversationDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.conversations.InsertConversationDTO;
 
-
 @CrossOrigin
 @AllArgsConstructor
 @Validated
@@ -59,7 +58,7 @@ public class ConversationController {
                 newConversationUseCase.newConversation(
                     conversationInConverter.toDomainInsert(insertConversationDTO))));
   }
-  
+
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/{conversationId}")
   public ResponseEntity<ConversationDTO> getConversationById(@PathVariable Integer conversationId) {

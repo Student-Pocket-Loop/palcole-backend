@@ -38,7 +38,6 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.converter.FavoritePro
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.favoritePromotions.FavoritePromotionDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.favoritePromotions.InsertFavoritePromotionDTO;
 
-
 @ExtendWith(MockitoExtension.class)
 class FavoritePromotionControllerTest {
 

@@ -344,5 +344,4 @@ public class ApplicationConfig {
   DeleteConversationUseCase getDeleteConversationUseCase(ConversationStorage conversationStorage) {
     return new DeleteConversationUseCaseImpl(conversationStorage);
   }
-
 }
