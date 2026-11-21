@@ -32,7 +32,6 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.dto.academicItems.Upd
 @CrossOrigin
 @AllArgsConstructor
 @Validated
-@PreAuthorize("isAuthenticated()")
 @RestController
 @RequestMapping("/api/v1/academic-items")
 public class AcademicItemController {
@@ -52,7 +51,7 @@ public class AcademicItemController {
             selectAllAcademicItemsUseCase.selectAllAcademicItems(pageableModel), pageableModel));
   }
 
-  @PreAuthorize("hasRole('ADMIN') or #insertAcademicItemDTO.studentId == principal.userId")
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PostMapping("/")
   public ResponseEntity<AcademicItemDTO> insertIntoAcademicItem(
       @RequestBody @Valid InsertAcademicItemDTO insertAcademicItemDTO) {
@@ -70,6 +69,7 @@ public class AcademicItemController {
             selectAcademicItemByIdUseCase.selectAcademicItemById(itemId)));
   }
 
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PutMapping("/{itemId}")
   public ResponseEntity<AcademicItemDTO> updateAcademicItem(
       @PathVariable Integer itemId,
@@ -80,6 +80,7 @@ public class AcademicItemController {
                 itemId, academicItemInConverter.toDomainUpdate(updateAcademicItemDTO))));
   }
 
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @DeleteMapping("/{itemId}")
   public ResponseEntity<Void> deleteAcademicItem(@PathVariable Integer itemId) {
     deleteAcademicItemUseCase.deleteAcademicItem(itemId);
