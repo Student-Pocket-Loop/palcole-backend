@@ -27,6 +27,10 @@ import org.vedruna.palcole.application.categories.NewCategoryUseCaseImpl;
 import org.vedruna.palcole.application.categories.SelectAllCategoriesUseCaseImpl;
 import org.vedruna.palcole.application.categories.SelectCategoryByIdUseCaseImpl;
 import org.vedruna.palcole.application.categories.UpdateCategoryUseCaseImpl;
+import org.vedruna.palcole.application.conversations.DeleteConversationUseCaseImpl;
+import org.vedruna.palcole.application.conversations.NewConversationUseCaseImpl;
+import org.vedruna.palcole.application.conversations.SelectAllConversationsUseCaseImpl;
+import org.vedruna.palcole.application.conversations.SelectConversationByIdUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.DeleteFavoritePromotionUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.NewFavoritePromotionUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.SelectAllFavoritePromotionsUseCaseImpl;
@@ -51,6 +55,10 @@ import org.vedruna.palcole.domain.ports.inbound.categories.NewCategoryUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.SelectAllCategoriesUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.SelectCategoryByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.UpdateCategoryUseCase;
+import org.vedruna.palcole.domain.ports.inbound.conversations.DeleteConversationUseCase;
+import org.vedruna.palcole.domain.ports.inbound.conversations.NewConversationUseCase;
+import org.vedruna.palcole.domain.ports.inbound.conversations.SelectAllConversationsUseCase;
+import org.vedruna.palcole.domain.ports.inbound.conversations.SelectConversationByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.DeleteFavoritePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.NewFavoritePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.SelectAllFavoritePromotionsUseCase;
@@ -72,6 +80,7 @@ import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.domain.ports.outbound.AcademicItemStorage;
 import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
+import org.vedruna.palcole.domain.ports.outbound.ConversationStorage;
 import org.vedruna.palcole.domain.ports.outbound.FavoritePromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.PromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
@@ -314,4 +323,25 @@ public class ApplicationConfig {
     return new DeleteFavoritePromotionUseCaseImpl(favoritePromotionStorage);
   }
 
+  @Bean
+  NewConversationUseCase getNewConversationUseCase(ConversationStorage conversationStorage) {
+    return new NewConversationUseCaseImpl(conversationStorage);
+  }
+
+  @Bean
+  SelectAllConversationsUseCase getSelectAllConversationsUseCase(
+      ConversationStorage conversationStorage) {
+    return new SelectAllConversationsUseCaseImpl(conversationStorage);
+  }
+
+  @Bean
+  SelectConversationByIdUseCase getSelectConversationByIdUseCase(
+      ConversationStorage conversationStorage) {
+    return new SelectConversationByIdUseCaseImpl(conversationStorage);
+  }
+
+  @Bean
+  DeleteConversationUseCase getDeleteConversationUseCase(ConversationStorage conversationStorage) {
+    return new DeleteConversationUseCaseImpl(conversationStorage);
+  }
 }

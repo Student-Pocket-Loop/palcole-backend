@@ -1,13 +1,12 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity;
 
-import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoritePromotionId;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoritePromotionId;
 
 @Data
 @Entity
