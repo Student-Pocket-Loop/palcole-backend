@@ -242,5 +242,4 @@ public class ApplicationConfig {
   DeletePromotionUseCase getDeletePromotionUseCase(PromotionStorage promotionStorage) {
     return new DeletePromotionUseCaseImpl(promotionStorage);
   }
-
 }
