@@ -2,6 +2,7 @@ package org.vedruna.palcole.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Promotion {
   private Integer promotionId;
@@ -95,5 +96,37 @@ public class Promotion {
 
   public void setEndDate(LocalDate endDate) {
     this.endDate = endDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Promotion that = (Promotion) o;
+    return Objects.equals(promotionId, that.promotionId)
+        && Objects.equals(categoryId, that.categoryId)
+        && Objects.equals(title, that.title)
+        && Objects.equals(description, that.description)
+        && Objects.equals(originalPrice, that.originalPrice)
+        && Objects.equals(discountPrice, that.discountPrice)
+        && Objects.equals(discountPercentage, that.discountPercentage)
+        && Objects.equals(promoCode, that.promoCode)
+        && Objects.equals(startDate, that.startDate)
+        && Objects.equals(endDate, that.endDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        promotionId,
+        categoryId,
+        title,
+        description,
+        originalPrice,
+        discountPrice,
+        discountPercentage,
+        promoCode,
+        startDate,
+        endDate);
   }
 }

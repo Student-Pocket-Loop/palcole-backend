@@ -1,6 +1,7 @@
 package org.vedruna.palcole.domain.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Conversation {
   private Integer conversationId;
@@ -41,4 +42,21 @@ public class Conversation {
   public void setStartedAt(LocalDateTime startedAt) {
     this.startedAt = startedAt;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Conversation that = (Conversation) o;
+    return Objects.equals(conversationId, that.conversationId)
+        && Objects.equals(itemId, that.itemId)
+        && Objects.equals(buyerId, that.buyerId)
+        && Objects.equals(startedAt, that.startedAt);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(conversationId, itemId, buyerId, startedAt);
+  }
+  
 }
