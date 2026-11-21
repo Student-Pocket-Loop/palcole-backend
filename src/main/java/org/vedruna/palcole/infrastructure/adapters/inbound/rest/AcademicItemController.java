@@ -28,7 +28,6 @@ import org.vedruna.palcole.infrastructure.adapters.inbound.dto.academicItems.Aca
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.academicItems.InsertAcademicItemDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.academicItems.UpdateAcademicItemDTO;
 
-
 @CrossOrigin
 @AllArgsConstructor
 @Validated

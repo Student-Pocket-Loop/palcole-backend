@@ -254,7 +254,7 @@ public class ApplicationConfig {
     return new DeletePromotionUseCaseImpl(promotionStorage);
   }
 
-    @Bean
+  @Bean
   NewAcademicItemUseCase getNewAcademicItemUseCase(AcademicItemStorage academicItemStorage) {
     return new NewAcademicItemUseCaseImpl(academicItemStorage);
   }
@@ -280,5 +280,4 @@ public class ApplicationConfig {
   DeleteAcademicItemUseCase getDeleteAcademicItemUseCase(AcademicItemStorage academicItemStorage) {
     return new DeleteAcademicItemUseCaseImpl(academicItemStorage);
   }
-
 }
