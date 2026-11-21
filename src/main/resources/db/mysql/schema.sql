@@ -12,14 +12,14 @@ CREATE TABLE IF NOT EXISTS roles (
 
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    roles_role_id INT NULL DEFAULT 2,
-    username VARCHAR(100) NOT NULL,
+    roles_role_id INT NOT NULL,
+    username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     educational_center VARCHAR(150) DEFAULT 'Santa Joaquina de Vedruna',
     create_date DATETIME DEFAULT (CURRENT_DATE),
-	account_expiration_date DATETIME,
-	is_locked BOOLEAN DEFAULT FALSE,
+account_expiration_date DATETIME,
+is_locked BOOLEAN DEFAULT FALSE,
     credentials_expiration_date DATETIME,
     is_enabled BOOLEAN DEFAULT (TRUE),
     FOREIGN KEY (roles_role_id) REFERENCES roles (role_id) ON DELETE RESTRICT

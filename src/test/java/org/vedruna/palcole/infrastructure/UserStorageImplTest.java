@@ -1,4 +1,4 @@
-package org.vedruna.palcole.infrastructure.adapters;
+package org.vedruna.palcole.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,6 @@ import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.infrastructure.UserStorageImpl;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.UserOutConverter;
 import org.vedruna.palcole.persistance.exception.UserNotFoundException;
 import org.vedruna.palcole.persistance.model.RoleEntity;
