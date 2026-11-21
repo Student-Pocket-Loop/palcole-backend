@@ -65,6 +65,22 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 GET {{baseUrl}}/categories/9999
 Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
+### PUT de una promoción que no existe
+### 404 - "PromotionNotFoundException: Resource Not Found"
+PUT {{baseUrl}}/promotions/9999
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Fantasma",
+    "originalPrice": 10.00,
+    "discountPrice": 5.00,
+    "discountPercentage": 50,
+    "startDate": "2026-09-01",
+    "endDate": "2026-09-30"
+}
+
 # =====================================================================
 #  409 CONFLICT
 # =====================================================================
@@ -193,6 +209,52 @@ Content-Type: application/json
     "refreshToken": "esto.no.es.un.token"
 }
 
+### POST de una promoción con la fecha de fin anterior a la de inicio
+### 400 - "IllegalArgumentException: Invalid Business Argument" - La fecha de fin no puede ser anterior...
+POST {{baseUrl}}/promotions/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Fechas mal",
+    "originalPrice": 10.00,
+    "discountPrice": 5.00,
+    "discountPercentage": 50,
+    "startDate": "2026-09-30",
+    "endDate": "2026-09-01"
+}
+
+### POST de una promoción con el precio con descuento mayor que el original
+### 400 - "IllegalArgumentException: Invalid Business Argument" - El precio con descuento no puede superar...
+POST {{baseUrl}}/promotions/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Precio mal",
+    "originalPrice": 10.00,
+    "discountPrice": 15.00,
+    "discountPercentage": 10,
+    "startDate": "2026-09-01",
+    "endDate": "2026-09-30"
+}
+
+### POST de una promoción con porcentaje fuera de rango y sin fechas
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.discountPercentage, errors.startDate, errors.endDate
+POST {{baseUrl}}/promotions/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Validacion",
+    "originalPrice": 10.00,
+    "discountPrice": 5.00,
+    "discountPercentage": 150
+}
+
 # =====================================================================
 #  401 UNAUTHORIZED  ->  HandlerSecurityExController
 # =====================================================================
@@ -255,6 +317,12 @@ GET {{baseUrl}}/roles/
 ### 403 - igual que la anterior: la corta Spring Security
 GET {{baseUrl}}/roles/
 Authorization: Bearer esto.no.es.un.token
+
+### Un usuario con rol USER intenta borrar una promoción (solo ADMIN escribe)
+### 403 - "AccessDeniedException: Access Denied"
+DELETE {{baseUrl}}/promotions/1
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
 
 # =====================================================================
 #  405 METHOD NOT ALLOWED
