@@ -81,6 +81,11 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "endDate": "2026-09-30"
 }
 
+### DELETE de un artículo que no existe
+### 404 - "AcademicItemNotFoundException: Resource Not Found"
+DELETE {{baseUrl}}/academic-items/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
 # =====================================================================
 #  409 CONFLICT
 # =====================================================================
@@ -153,9 +158,6 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 {
     "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 }
-
-
-
 
 ### POST de un usuario con email inválido y contraseña corta
 ### 400 - "MethodArgumentNotValidException: Validation Error" - errors.email y errors.password
@@ -255,6 +257,36 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "discountPercentage": 150
 }
 
+### POST de un artículo con una condición que no existe en el enum
+### 400 - "HttpMessageNotReadableException: Malformed Body"
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 1,
+    "title": "Libro",
+    "description": "Prueba",
+    "itemCondition": "ROTO",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
+
+### POST de un artículo sin título ni imagen
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.title y errors.imageUrl
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 1,
+    "title": "",
+    "description": "Prueba",
+    "itemCondition": "NUEVO",
+    "imageUrl": ""
+}
+
 # =====================================================================
 #  401 UNAUTHORIZED  ->  HandlerSecurityExController
 # =====================================================================
@@ -323,6 +355,20 @@ Authorization: Bearer esto.no.es.un.token
 DELETE {{baseUrl}}/promotions/1
 Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
+### Un usuario con rol USER intenta publicar un artículo a nombre de otro usuario (studentId=1)
+### 403 - "AccessDeniedException: Access Denied" (solo ADMIN o el propio studentId; manuel NO es el usuario 1)
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 1,
+    "title": "Suplantación",
+    "description": "Prueba",
+    "itemCondition": "NUEVO",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
 
 # =====================================================================
 #  405 METHOD NOT ALLOWED
@@ -337,4 +383,3 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 {
     "name": "NUEVO"
 }
-

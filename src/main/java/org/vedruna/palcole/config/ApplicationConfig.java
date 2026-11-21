@@ -17,6 +17,11 @@ import org.vedruna.palcole.application.User.NewUserUseCaseImpl;
 import org.vedruna.palcole.application.User.SelectAllUsersUseCaseImpl;
 import org.vedruna.palcole.application.User.SelectUserByIdUseCaseImpl;
 import org.vedruna.palcole.application.User.UpdateUserUseCaseImpl;
+import org.vedruna.palcole.application.academicItems.DeleteAcademicItemUseCaseImpl;
+import org.vedruna.palcole.application.academicItems.NewAcademicItemUseCaseImpl;
+import org.vedruna.palcole.application.academicItems.SelectAcademicItemByIdUseCaseImpl;
+import org.vedruna.palcole.application.academicItems.SelectAllAcademicItemsUseCaseImpl;
+import org.vedruna.palcole.application.academicItems.UpdateAcademicItemUseCaseImpl;
 import org.vedruna.palcole.application.categories.DeleteCategoryUseCaseImpl;
 import org.vedruna.palcole.application.categories.NewCategoryUseCaseImpl;
 import org.vedruna.palcole.application.categories.SelectAllCategoriesUseCaseImpl;
@@ -32,6 +37,11 @@ import org.vedruna.palcole.application.role.NewRoleUseCaseImpl;
 import org.vedruna.palcole.application.role.SelectAllRolesUseCaseImpl;
 import org.vedruna.palcole.application.role.SelectRoleByIdUseCaseImpl;
 import org.vedruna.palcole.application.role.UpdateRoleUseCaseImpl;
+import org.vedruna.palcole.domain.ports.inbound.academicItems.DeleteAcademicItemUseCase;
+import org.vedruna.palcole.domain.ports.inbound.academicItems.NewAcademicItemUseCase;
+import org.vedruna.palcole.domain.ports.inbound.academicItems.SelectAcademicItemByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.academicItems.SelectAllAcademicItemsUseCase;
+import org.vedruna.palcole.domain.ports.inbound.academicItems.UpdateAcademicItemUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.DeleteCategoryUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.NewCategoryUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.SelectAllCategoriesUseCase;
@@ -52,6 +62,7 @@ import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
+import org.vedruna.palcole.domain.ports.outbound.AcademicItemStorage;
 import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
 import org.vedruna.palcole.domain.ports.outbound.PromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
@@ -241,5 +252,32 @@ public class ApplicationConfig {
   @Bean
   DeletePromotionUseCase getDeletePromotionUseCase(PromotionStorage promotionStorage) {
     return new DeletePromotionUseCaseImpl(promotionStorage);
+  }
+
+  @Bean
+  NewAcademicItemUseCase getNewAcademicItemUseCase(AcademicItemStorage academicItemStorage) {
+    return new NewAcademicItemUseCaseImpl(academicItemStorage);
+  }
+
+  @Bean
+  SelectAllAcademicItemsUseCase getSelectAllAcademicItemsUseCase(
+      AcademicItemStorage academicItemStorage) {
+    return new SelectAllAcademicItemsUseCaseImpl(academicItemStorage);
+  }
+
+  @Bean
+  SelectAcademicItemByIdUseCase getSelectAcademicItemByIdUseCase(
+      AcademicItemStorage academicItemStorage) {
+    return new SelectAcademicItemByIdUseCaseImpl(academicItemStorage);
+  }
+
+  @Bean
+  UpdateAcademicItemUseCase getUpdateAcademicItemUseCase(AcademicItemStorage academicItemStorage) {
+    return new UpdateAcademicItemUseCaseImpl(academicItemStorage);
+  }
+
+  @Bean
+  DeleteAcademicItemUseCase getDeleteAcademicItemUseCase(AcademicItemStorage academicItemStorage) {
+    return new DeleteAcademicItemUseCaseImpl(academicItemStorage);
   }
 }

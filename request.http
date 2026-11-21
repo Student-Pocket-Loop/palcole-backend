@@ -237,3 +237,53 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 DELETE {{baseUrl}}/promotions/3
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
+# =====================================================================
+#  ACADEMIC ITEMS (cualquier usuario autenticado)
+# =====================================================================
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET ALL
+GET {{baseUrl}}/academic-items/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/academic-items/?page=0&size=5&sort=title,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET BY ID
+GET {{baseUrl}}/academic-items/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - POST
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 1,
+    "title": "Libro de Programación",
+    "description": "Apenas usado",
+    "price": 12.50,
+    "itemCondition": "COMO_NUEVO",
+    "listingType": "VENTA",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - PUT
+PUT {{baseUrl}}/academic-items/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 1,
+    "title": "Libro de Programación",
+    "description": "Apenas usado",
+    "price": 10.00,
+    "itemCondition": "COMO_NUEVO",
+    "saleStatus": "RESERVADO",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - DELETE
+DELETE {{baseUrl}}/academic-items/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
