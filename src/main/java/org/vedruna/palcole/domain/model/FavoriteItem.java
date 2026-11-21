@@ -1,5 +1,7 @@
 package org.vedruna.palcole.domain.model;
 
+import java.util.Objects;
+
 public class FavoriteItem {
   private Integer favoriteId;
   private Integer userId;
@@ -29,5 +31,18 @@ public class FavoriteItem {
 
   public void setItemId(Integer itemId) {
     this.itemId = itemId;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    FavoriteItem that = (FavoriteItem) o;
+    return Objects.equals(userId, that.userId) && Objects.equals(itemId, that.itemId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(userId, itemId);
   }
 }

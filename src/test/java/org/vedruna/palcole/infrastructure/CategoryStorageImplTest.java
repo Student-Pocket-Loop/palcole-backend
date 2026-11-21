@@ -1,4 +1,4 @@
-package org.vedruna.palcole.infrastructure.adapters;
+package org.vedruna.palcole.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,6 @@ import org.vedruna.palcole.domain.exception.categories.CategoryNotFoundException
 import org.vedruna.palcole.domain.model.Category;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
-import org.vedruna.palcole.infrastructure.CategoryStorageImpl;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.CategoryOutConverter;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.CategoryEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.CategoryRepository;

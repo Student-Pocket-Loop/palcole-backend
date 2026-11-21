@@ -182,3 +182,58 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 ### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - DELETE
 DELETE {{baseUrl}}/categories/1
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN)
+# =====================================================================
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET ALL
+GET {{baseUrl}}/promotions/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/promotions/?page=0&size=5&sort=title,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET BY ID
+GET {{baseUrl}}/promotions/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - POST
+POST {{baseUrl}}/promotions/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Mochilas escolares",
+    "description": "Descuento en mochilas",
+    "originalPrice": 40.00,
+    "discountPrice": 30.00,
+    "discountPercentage": 25,
+    "promoCode": "MOCHI25",
+    "startDate": "2026-09-01",
+    "endDate": "2026-10-15"
+}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - PUT
+PUT {{baseUrl}}/promotions/3
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Mochilas escolares (ampliada)",
+    "description": "Descuento en mochilas",
+    "originalPrice": 40.00,
+    "discountPrice": 28.00,
+    "discountPercentage": 30,
+    "promoCode": "MOCHI30",
+    "startDate": "2026-09-01",
+    "endDate": "2026-10-31"
+}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - DELETE
+DELETE {{baseUrl}}/promotions/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+

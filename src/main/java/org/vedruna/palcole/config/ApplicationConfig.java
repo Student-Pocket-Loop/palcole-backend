@@ -22,6 +22,11 @@ import org.vedruna.palcole.application.categories.NewCategoryUseCaseImpl;
 import org.vedruna.palcole.application.categories.SelectAllCategoriesUseCaseImpl;
 import org.vedruna.palcole.application.categories.SelectCategoryByIdUseCaseImpl;
 import org.vedruna.palcole.application.categories.UpdateCategoryUseCaseImpl;
+import org.vedruna.palcole.application.promotions.DeletePromotionUseCaseImpl;
+import org.vedruna.palcole.application.promotions.NewPromotionUseCaseImpl;
+import org.vedruna.palcole.application.promotions.SelectAllPromotionsUseCaseImpl;
+import org.vedruna.palcole.application.promotions.SelectPromotionByIdUseCaseImpl;
+import org.vedruna.palcole.application.promotions.UpdatePromotionUseCaseImpl;
 import org.vedruna.palcole.application.role.DeleteRoleUseCaseImpl;
 import org.vedruna.palcole.application.role.NewRoleUseCaseImpl;
 import org.vedruna.palcole.application.role.SelectAllRolesUseCaseImpl;
@@ -32,6 +37,11 @@ import org.vedruna.palcole.domain.ports.inbound.categories.NewCategoryUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.SelectAllCategoriesUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.SelectCategoryByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.categories.UpdateCategoryUseCase;
+import org.vedruna.palcole.domain.ports.inbound.promotions.DeletePromotionUseCase;
+import org.vedruna.palcole.domain.ports.inbound.promotions.NewPromotionUseCase;
+import org.vedruna.palcole.domain.ports.inbound.promotions.SelectAllPromotionsUseCase;
+import org.vedruna.palcole.domain.ports.inbound.promotions.SelectPromotionByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.promotions.UpdatePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.DeleteRoleUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
@@ -43,6 +53,7 @@ import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
+import org.vedruna.palcole.domain.ports.outbound.PromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 import org.vedruna.palcole.persistance.repository.UserRepository;
@@ -205,5 +216,30 @@ public class ApplicationConfig {
   @Bean
   DeleteCategoryUseCase getDeleteCategoryUseCase(CategoryStorage categoryStorage) {
     return new DeleteCategoryUseCaseImpl(categoryStorage);
+  }
+
+  @Bean
+  NewPromotionUseCase getNewPromotionUseCase(PromotionStorage promotionStorage) {
+    return new NewPromotionUseCaseImpl(promotionStorage);
+  }
+
+  @Bean
+  SelectAllPromotionsUseCase getSelectAllPromotionsUseCase(PromotionStorage promotionStorage) {
+    return new SelectAllPromotionsUseCaseImpl(promotionStorage);
+  }
+
+  @Bean
+  SelectPromotionByIdUseCase getSelectPromotionByIdUseCase(PromotionStorage promotionStorage) {
+    return new SelectPromotionByIdUseCaseImpl(promotionStorage);
+  }
+
+  @Bean
+  UpdatePromotionUseCase getUpdatePromotionUseCase(PromotionStorage promotionStorage) {
+    return new UpdatePromotionUseCaseImpl(promotionStorage);
+  }
+
+  @Bean
+  DeletePromotionUseCase getDeletePromotionUseCase(PromotionStorage promotionStorage) {
+    return new DeletePromotionUseCaseImpl(promotionStorage);
   }
 }

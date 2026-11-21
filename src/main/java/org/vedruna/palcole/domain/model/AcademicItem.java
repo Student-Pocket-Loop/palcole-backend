@@ -2,6 +2,7 @@ package org.vedruna.palcole.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import org.vedruna.palcole.domain.model.enums.ItemCondition;
 import org.vedruna.palcole.domain.model.enums.ListingType;
 import org.vedruna.palcole.domain.model.enums.SaleStatus;
@@ -107,5 +108,39 @@ public class AcademicItem {
 
   public void setImageUrl(String imageUrl) {
     this.imageUrl = imageUrl;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    AcademicItem that = (AcademicItem) o;
+    return Objects.equals(itemId, that.itemId)
+        && Objects.equals(studentId, that.studentId)
+        && Objects.equals(categoryId, that.categoryId)
+        && Objects.equals(title, that.title)
+        && Objects.equals(description, that.description)
+        && Objects.equals(price, that.price)
+        && Objects.equals(itemCondition, that.itemCondition)
+        && Objects.equals(listingType, that.listingType)
+        && Objects.equals(saleStatus, that.saleStatus)
+        && Objects.equals(publishedAt, that.publishedAt)
+        && Objects.equals(imageUrl, that.imageUrl);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        itemId,
+        studentId,
+        categoryId,
+        title,
+        description,
+        price,
+        itemCondition,
+        listingType,
+        saleStatus,
+        publishedAt,
+        imageUrl);
   }
 }
