@@ -3,7 +3,6 @@ package org.vedruna.palcole.domain.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 import org.vedruna.palcole.domain.model.enums.ItemCondition;
 import org.vedruna.palcole.domain.model.enums.ListingType;
 import org.vedruna.palcole.domain.model.enums.SaleStatus;
@@ -131,8 +130,17 @@ public class AcademicItem {
 
   @Override
   public int hashCode() {
-    return Objects.hash(itemId, studentId, categoryId, title, description, price,
-        itemCondition, listingType, saleStatus, publishedAt, imageUrl);
+    return Objects.hash(
+        itemId,
+        studentId,
+        categoryId,
+        title,
+        description,
+        price,
+        itemCondition,
+        listingType,
+        saleStatus,
+        publishedAt,
+        imageUrl);
   }
-
 }

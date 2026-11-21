@@ -58,5 +58,4 @@ public class Conversation {
   public int hashCode() {
     return Objects.hash(conversationId, itemId, buyerId, startedAt);
   }
-  
 }

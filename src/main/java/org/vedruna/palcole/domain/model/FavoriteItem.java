@@ -45,5 +45,4 @@ public class FavoriteItem {
   public int hashCode() {
     return Objects.hash(userId, itemId);
   }
-
 }

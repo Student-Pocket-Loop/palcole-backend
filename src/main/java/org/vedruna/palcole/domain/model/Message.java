@@ -68,5 +68,4 @@ public class Message {
   public int hashCode() {
     return Objects.hash(messageId, conversationId, senderId, content, sentAt);
   }
-
 }
