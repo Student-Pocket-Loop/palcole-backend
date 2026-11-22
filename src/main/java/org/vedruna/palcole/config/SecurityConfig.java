@@ -62,6 +62,8 @@ public class SecurityConfig {
                     .permitAll() // Interfaz de Swagger
                     .requestMatchers("/api/v1/auth/**")
                     .permitAll() // Todos los endpoints de /auth (login, register)
+                    .requestMatchers("/error")
+                    .permitAll()
                     // Cualquier otra petición requiere autenticación
                     .anyRequest()
                     .authenticated())

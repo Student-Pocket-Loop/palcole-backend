@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.vedruna.palcole.domain.model.Promotion;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.CategoryEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.PromotionEntity;
 
 class PromotionOutConverterTest {
@@ -45,7 +46,9 @@ class PromotionOutConverterTest {
   private PromotionEntity crearPromotionEntity(Integer promotionId, String title) {
     PromotionEntity o = new PromotionEntity();
     o.setPromotionId(promotionId);
-    o.setCategoryId(1);
+    CategoryEntity categoryRef = new CategoryEntity();
+    categoryRef.setCategoryId(1);
+    o.setCategory(categoryRef);
     o.setTitle(title);
     o.setDescription("Descuento por la vuelta al cole");
     o.setOriginalPrice(new BigDecimal("20.00"));
@@ -101,6 +104,7 @@ class PromotionOutConverterTest {
 
     // ESPERADO
     PromotionEntity promotionEntityEsperado = crearPromotionEntity(1, "Papelería");
+    promotionEntityEsperado.setCategory(null); // la relación la resuelve el storage
 
     // EJECUCIÓN
     PromotionEntity res = promotionOutConverter.toEntity(promotionInput);

@@ -1,3 +1,27 @@
+-- INSERT INTO palcole.roles VALUES (1, "ADMIN"), (2, "USER");
+
+-- INSERT INTO palcole.users (roles_role_id, username, email, password, account_expiration_date, credentials_expiration_date)
+-- VALUES (1, "joaquin", "admin@localhost.es", "$2a$10$bOY/2//tFFoJwliab9gyHubB6kFEdhIS9SIFS4aeOcVqj3ZFQZVa.", "2999-12-31 23:59:59", "2999-12-31 23:59:59");
+
+-- INSERT INTO palcole.users (roles_role_id, username, email, password, account_expiration_date, credentials_expiration_date)
+-- VALUES (2, "manuel", "manuel@localhost.es", "$2a$10$bOY/2//tFFoJwliab9gyHubB6kFEdhIS9SIFS4aeOcVqj3ZFQZVa.", "2999-12-31 23:59:59", "2999-12-31 23:59:59");
+
+/*
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE palcole.users;
+TRUNCATE TABLE palcole.roles;
+TRUNCATE TABLE palcole.promotions;
+TRUNCATE TABLE palcole.messages;
+TRUNCATE TABLE palcole.favorite_promotions;
+TRUNCATE TABLE palcole.favorite_items;
+TRUNCATE TABLE palcole.conversations;
+TRUNCATE TABLE palcole.categories;
+TRUNCATE TABLE palcole.academic_items;
+
+SET FOREIGN_KEY_CHECKS = 1;
+*/
+
 USE palcole;
 
 -- 1. ROLES
@@ -71,10 +95,10 @@ INSERT INTO favorite_promotions (user_id, promotion_id) VALUES
   (3, 3);
 
 -- 8. CONVERSATIONS (buyer_id es quien pregunta por el artículo de otro usuario)
-INSERT INTO conversations (conversation_id, item_id, buyer_id) VALUES
-  (1, 1, 3),   -- lucia pregunta por el libro de manuel
-  (2, 2, 2),   -- manuel pregunta por la calculadora de lucia
-  (3, 3, 3);   -- lucia pregunta por los apuntes de manuel
+INSERT INTO conversations (item_id, buyer_id) VALUES
+  (1, 3),   -- lucia pregunta por el libro de manuel
+  (2, 2),   -- manuel pregunta por la calculadora de lucia
+  (3, 3);   -- lucia pregunta por los apuntes de manuel
 
 -- 9. MESSAGES
 INSERT INTO messages (conversation_id, sender_id, content) VALUES

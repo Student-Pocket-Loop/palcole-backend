@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +14,12 @@ import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.Conve
 @Mapper(componentModel = "spring")
 public interface ConversationOutConverter {
 
+  @Mapping(source = "item.itemId", target = "itemId")
+  @Mapping(source = "buyer.userId", target = "buyerId")
   Conversation toDomain(ConversationEntity conversationEntity);
 
+  @Mapping(target = "item", ignore = true)
+  @Mapping(target = "buyer", ignore = true)
   ConversationEntity toEntity(Conversation conversation);
 
   /** Convierte el modelo de paginación del dominio al objeto Pageable de Spring Data. */

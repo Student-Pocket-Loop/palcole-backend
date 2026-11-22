@@ -24,6 +24,8 @@ import org.vedruna.palcole.domain.model.enums.SaleStatus;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.CategoryEntity;
+import org.vedruna.palcole.persistance.model.UserEntity;
 
 class AcademicItemOutConverterTest {
 
@@ -49,8 +51,12 @@ class AcademicItemOutConverterTest {
   private AcademicItemEntity crearAcademicItemEntity(Integer itemId, String title) {
     AcademicItemEntity o = new AcademicItemEntity();
     o.setItemId(itemId);
-    o.setStudentId(1);
-    o.setCategoryId(1);
+    UserEntity studentRef = new UserEntity();
+    studentRef.setUserId(1);
+    o.setStudent(studentRef);
+    CategoryEntity categoryRef = new CategoryEntity();
+    categoryRef.setCategoryId(1);
+    o.setCategory(categoryRef);
     o.setTitle(title);
     o.setDescription("En buen estado");
     o.setPrice(new BigDecimal("10.00"));
@@ -106,6 +112,8 @@ class AcademicItemOutConverterTest {
 
     // ESPERADO
     AcademicItemEntity academicItemEntityEsperado = crearAcademicItemEntity(1, "Calculadora");
+    academicItemEntityEsperado.setStudent(null); // la relación la resuelve el storage
+    academicItemEntityEsperado.setCategory(null); // la relación la resuelve el storage
 
     // EJECUCIÓN
     AcademicItemEntity res = academicItemOutConverter.toEntity(academicItemInput);

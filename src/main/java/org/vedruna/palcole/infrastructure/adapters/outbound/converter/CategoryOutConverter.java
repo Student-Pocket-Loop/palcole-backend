@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,8 @@ public interface CategoryOutConverter {
 
   Category toDomain(CategoryEntity categoryEntity);
 
+  @Mapping(target = "promotions", ignore = true)
+  @Mapping(target = "academicItems", ignore = true)
   CategoryEntity toEntity(Category category);
 
   /** Convierte el modelo de paginación del dominio al objeto Pageable de Spring Data. */

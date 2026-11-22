@@ -24,13 +24,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.vedruna.palcole.domain.exception.academicItems.AcademicItemNotFoundException;
 import org.vedruna.palcole.domain.exception.conversations.ConversationNotFoundException;
+import org.vedruna.palcole.domain.exception.users.UserNotFoundException;
 import org.vedruna.palcole.domain.model.Conversation;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.ConversationOutConverter;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.ConversationEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.AcademicItemRepository;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.ConversationRepository;
+import org.vedruna.palcole.persistance.model.UserEntity;
+import org.vedruna.palcole.persistance.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ConversationStorageImplTest {
@@ -38,6 +44,10 @@ class ConversationStorageImplTest {
   @Mock private ConversationRepository conversationRepository;
 
   @Mock private ConversationOutConverter conversationOutConverter;
+
+  @Mock private AcademicItemRepository academicItemRepository;
+
+  @Mock private UserRepository userRepository;
 
   @InjectMocks private ConversationStorageImpl conversationStorageImpl;
 
@@ -53,8 +63,12 @@ class ConversationStorageImplTest {
   private ConversationEntity crearConversationEntity(Integer conversationId, Integer itemId) {
     ConversationEntity o = new ConversationEntity();
     o.setConversationId(conversationId);
-    o.setItemId(itemId);
-    o.setBuyerId(2);
+    AcademicItemEntity itemRef = new AcademicItemEntity();
+    itemRef.setItemId(itemId);
+    o.setItem(itemRef);
+    UserEntity buyerRef = new UserEntity();
+    buyerRef.setUserId(2);
+    o.setBuyer(buyerRef);
     o.setStartedAt(LocalDateTime.of(2026, 9, 1, 10, 0));
     return o;
   }
@@ -188,8 +202,12 @@ class ConversationStorageImplTest {
     ConversationEntity conversationEntityGuardadoMock = crearConversationEntity(3, 10);
     Conversation conversationCreadoMock = crearConversation(3, 10);
 
+    AcademicItemEntity itemEntityMock = new AcademicItemEntity();
+    UserEntity buyerEntityMock = new UserEntity();
     when(conversationOutConverter.toEntity(newConversationInput))
         .thenReturn(conversationEntityNuevoMock);
+    when(academicItemRepository.findById(10)).thenReturn(Optional.of(itemEntityMock));
+    when(userRepository.findById(2)).thenReturn(Optional.of(buyerEntityMock));
     when(conversationRepository.save(conversationEntityNuevoMock))
         .thenReturn(conversationEntityGuardadoMock);
     when(conversationOutConverter.toDomain(conversationEntityGuardadoMock))
@@ -203,6 +221,8 @@ class ConversationStorageImplTest {
         () -> {
           assertNotNull(res);
           assertEquals(conversationEsperado, res);
+          assertEquals(itemEntityMock, conversationEntityNuevoMock.getItem());
+          assertEquals(buyerEntityMock, conversationEntityNuevoMock.getBuyer());
         });
   }
 
@@ -216,8 +236,12 @@ class ConversationStorageImplTest {
     // MOCKS
     ConversationEntity conversationEntityNuevoMock = crearConversationEntity(null, 10);
 
+    AcademicItemEntity itemEntityMock = new AcademicItemEntity();
+    UserEntity buyerEntityMock = new UserEntity();
     when(conversationOutConverter.toEntity(newConversationInput))
         .thenReturn(conversationEntityNuevoMock);
+    when(academicItemRepository.findById(10)).thenReturn(Optional.of(itemEntityMock));
+    when(userRepository.findById(2)).thenReturn(Optional.of(buyerEntityMock));
     when(conversationRepository.save(conversationEntityNuevoMock))
         .thenThrow(new DataIntegrityViolationException("Conflicto con los datos existentes"));
 
@@ -229,6 +253,56 @@ class ConversationStorageImplTest {
 
     assertEquals("Conflicto con los datos existentes", ex.getMessage());
     verify(conversationOutConverter, never()).toDomain(any(ConversationEntity.class));
+  }
+
+  @Test
+  @DisplayName("Test storage insertConversation Ko (item inexistente)")
+  void insertConversationKoItemNotFoundTest() {
+
+    // INPUT
+    Conversation newConversationInput = crearConversation(null, 10);
+
+    // MOCKS
+    ConversationEntity conversationEntityNuevoMock = crearConversationEntity(null, 10);
+
+    when(conversationOutConverter.toEntity(newConversationInput))
+        .thenReturn(conversationEntityNuevoMock);
+    when(academicItemRepository.findById(10)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    AcademicItemNotFoundException ex =
+        assertThrows(
+            AcademicItemNotFoundException.class,
+            () -> conversationStorageImpl.insertConversation(newConversationInput));
+
+    assertNotNull(ex.getMessage());
+    verify(conversationRepository, never()).save(any(ConversationEntity.class));
+  }
+
+  @Test
+  @DisplayName("Test storage insertConversation Ko (buyer inexistente)")
+  void insertConversationKoBuyerNotFoundTest() {
+
+    // INPUT
+    Conversation newConversationInput = crearConversation(null, 10);
+
+    // MOCKS
+    ConversationEntity conversationEntityNuevoMock = crearConversationEntity(null, 10);
+
+    AcademicItemEntity itemEntityMock = new AcademicItemEntity();
+    when(conversationOutConverter.toEntity(newConversationInput))
+        .thenReturn(conversationEntityNuevoMock);
+    when(academicItemRepository.findById(10)).thenReturn(Optional.of(itemEntityMock));
+    when(userRepository.findById(2)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    UserNotFoundException ex =
+        assertThrows(
+            UserNotFoundException.class,
+            () -> conversationStorageImpl.insertConversation(newConversationInput));
+
+    assertNotNull(ex.getMessage());
+    verify(conversationRepository, never()).save(any(ConversationEntity.class));
   }
 
   @Test

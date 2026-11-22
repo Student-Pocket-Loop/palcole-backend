@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.vedruna.palcole.domain.exception.academicItems.AcademicItemNotFoundException;
+import org.vedruna.palcole.domain.exception.categories.CategoryNotFoundException;
 import org.vedruna.palcole.domain.model.AcademicItem;
 import org.vedruna.palcole.domain.model.enums.ItemCondition;
 import org.vedruna.palcole.domain.model.enums.ListingType;
@@ -34,7 +35,12 @@ import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.AcademicItemOutConverter;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.CategoryEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.AcademicItemRepository;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.CategoryRepository;
+import org.vedruna.palcole.persistance.exception.UserNotFoundException;
+import org.vedruna.palcole.persistance.model.UserEntity;
+import org.vedruna.palcole.persistance.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class AcademicItemStorageImplTest {
@@ -42,6 +48,10 @@ class AcademicItemStorageImplTest {
   @Mock private AcademicItemRepository academicItemRepository;
 
   @Mock private AcademicItemOutConverter academicItemOutConverter;
+
+  @Mock private UserRepository userRepository;
+
+  @Mock private CategoryRepository categoryRepository;
 
   @InjectMocks private AcademicItemStorageImpl academicItemStorageImpl;
 
@@ -64,8 +74,12 @@ class AcademicItemStorageImplTest {
   private AcademicItemEntity crearAcademicItemEntity(Integer itemId, String title) {
     AcademicItemEntity o = new AcademicItemEntity();
     o.setItemId(itemId);
-    o.setStudentId(1);
-    o.setCategoryId(1);
+    UserEntity studentRef = new UserEntity();
+    studentRef.setUserId(1);
+    o.setStudent(studentRef);
+    CategoryEntity categoryRef = new CategoryEntity();
+    categoryRef.setCategoryId(1);
+    o.setCategory(categoryRef);
     o.setTitle(title);
     o.setDescription("En buen estado");
     o.setPrice(new BigDecimal("10.00"));
@@ -222,8 +236,10 @@ class AcademicItemStorageImplTest {
         crearAcademicItemEntity(1, "Calculadora actualizada");
     AcademicItem academicItemActualizadoMock = crearAcademicItem(1, "Calculadora actualizada");
 
+    CategoryEntity categoryEntityMock = new CategoryEntity();
     when(academicItemRepository.findById(itemIdInput))
         .thenReturn(Optional.of(academicItemEntityExistenteMock));
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryEntityMock));
     when(academicItemRepository.save(academicItemEntityExistenteMock))
         .thenReturn(academicItemEntityGuardadoMock);
     when(academicItemOutConverter.toDomain(academicItemEntityGuardadoMock))
@@ -238,6 +254,7 @@ class AcademicItemStorageImplTest {
         () -> {
           assertNotNull(res);
           assertEquals("Calculadora actualizada", academicItemEntityExistenteMock.getTitle());
+          assertEquals(categoryEntityMock, academicItemEntityExistenteMock.getCategory());
           assertEquals(academicItemEsperado, res);
         });
   }
@@ -254,6 +271,8 @@ class AcademicItemStorageImplTest {
     newAcademicItemInput.setSaleStatus(null);
 
     // MOCKS
+    CategoryEntity categoryEntityMock = new CategoryEntity();
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryEntityMock));
     AcademicItemEntity academicItemEntityExistenteMock = crearAcademicItemEntity(1, "Calculadora");
     AcademicItemEntity academicItemEntityGuardadoMock =
         crearAcademicItemEntity(1, "Calculadora actualizada");
@@ -303,6 +322,31 @@ class AcademicItemStorageImplTest {
   }
 
   @Test
+  @DisplayName("Test storage updateAcademicItem Ko (category inexistente)")
+  void updateAcademicItemKoCategoryNotFoundTest() {
+
+    // INPUT
+    Integer itemIdInput = 1;
+    AcademicItem newAcademicItemInput = crearAcademicItem(null, "Calculadora actualizada");
+
+    // MOCKS
+    AcademicItemEntity academicItemEntityExistenteMock = crearAcademicItemEntity(1, "Calculadora");
+
+    when(academicItemRepository.findById(itemIdInput))
+        .thenReturn(Optional.of(academicItemEntityExistenteMock));
+    when(categoryRepository.findById(1)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    CategoryNotFoundException ex =
+        assertThrows(
+            CategoryNotFoundException.class,
+            () -> academicItemStorageImpl.updateAcademicItem(itemIdInput, newAcademicItemInput));
+
+    assertNotNull(ex.getMessage());
+    verify(academicItemRepository, never()).save(any(AcademicItemEntity.class));
+  }
+
+  @Test
   @DisplayName("Test storage insertAcademicItem Ok")
   void insertAcademicItemOkTest() {
 
@@ -317,8 +361,12 @@ class AcademicItemStorageImplTest {
     AcademicItemEntity academicItemEntityGuardadoMock = crearAcademicItemEntity(3, "Calculadora");
     AcademicItem academicItemCreadoMock = crearAcademicItem(3, "Calculadora");
 
+    UserEntity studentEntityMock = new UserEntity();
+    CategoryEntity categoryEntityMock = new CategoryEntity();
     when(academicItemOutConverter.toEntity(newAcademicItemInput))
         .thenReturn(academicItemEntityNuevoMock);
+    when(userRepository.findById(1)).thenReturn(Optional.of(studentEntityMock));
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryEntityMock));
     when(academicItemRepository.save(academicItemEntityNuevoMock))
         .thenReturn(academicItemEntityGuardadoMock);
     when(academicItemOutConverter.toDomain(academicItemEntityGuardadoMock))
@@ -332,6 +380,8 @@ class AcademicItemStorageImplTest {
         () -> {
           assertNotNull(res);
           assertEquals(academicItemEsperado, res);
+          assertEquals(studentEntityMock, academicItemEntityNuevoMock.getStudent());
+          assertEquals(categoryEntityMock, academicItemEntityNuevoMock.getCategory());
         });
   }
 
@@ -345,8 +395,12 @@ class AcademicItemStorageImplTest {
     // MOCKS
     AcademicItemEntity academicItemEntityNuevoMock = crearAcademicItemEntity(null, "Calculadora");
 
+    UserEntity studentEntityMock = new UserEntity();
+    CategoryEntity categoryEntityMock = new CategoryEntity();
     when(academicItemOutConverter.toEntity(newAcademicItemInput))
         .thenReturn(academicItemEntityNuevoMock);
+    when(userRepository.findById(1)).thenReturn(Optional.of(studentEntityMock));
+    when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryEntityMock));
     when(academicItemRepository.save(academicItemEntityNuevoMock))
         .thenThrow(new DataIntegrityViolationException("Conflicto con los datos existentes"));
 
@@ -358,6 +412,56 @@ class AcademicItemStorageImplTest {
 
     assertEquals("Conflicto con los datos existentes", ex.getMessage());
     verify(academicItemOutConverter, never()).toDomain(any(AcademicItemEntity.class));
+  }
+
+  @Test
+  @DisplayName("Test storage insertAcademicItem Ko (student inexistente)")
+  void insertAcademicItemKoStudentNotFoundTest() {
+
+    // INPUT
+    AcademicItem newAcademicItemInput = crearAcademicItem(null, "Calculadora");
+
+    // MOCKS
+    AcademicItemEntity academicItemEntityNuevoMock = crearAcademicItemEntity(null, "Calculadora");
+
+    when(academicItemOutConverter.toEntity(newAcademicItemInput))
+        .thenReturn(academicItemEntityNuevoMock);
+    when(userRepository.findById(1)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    UserNotFoundException ex =
+        assertThrows(
+            UserNotFoundException.class,
+            () -> academicItemStorageImpl.insertAcademicItem(newAcademicItemInput));
+
+    assertNotNull(ex.getMessage());
+    verify(academicItemRepository, never()).save(any(AcademicItemEntity.class));
+  }
+
+  @Test
+  @DisplayName("Test storage insertAcademicItem Ko (category inexistente)")
+  void insertAcademicItemKoCategoryNotFoundTest() {
+
+    // INPUT
+    AcademicItem newAcademicItemInput = crearAcademicItem(null, "Calculadora");
+
+    // MOCKS
+    AcademicItemEntity academicItemEntityNuevoMock = crearAcademicItemEntity(null, "Calculadora");
+
+    UserEntity studentEntityMock = new UserEntity();
+    when(academicItemOutConverter.toEntity(newAcademicItemInput))
+        .thenReturn(academicItemEntityNuevoMock);
+    when(userRepository.findById(1)).thenReturn(Optional.of(studentEntityMock));
+    when(categoryRepository.findById(1)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    CategoryNotFoundException ex =
+        assertThrows(
+            CategoryNotFoundException.class,
+            () -> academicItemStorageImpl.insertAcademicItem(newAcademicItemInput));
+
+    assertNotNull(ex.getMessage());
+    verify(academicItemRepository, never()).save(any(AcademicItemEntity.class));
   }
 
   @Test
