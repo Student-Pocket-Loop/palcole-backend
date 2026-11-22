@@ -19,7 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.vedruna.palcole.domain.model.Conversation;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.ConversationEntity;
+import org.vedruna.palcole.persistance.model.UserEntity;
 
 class ConversationOutConverterTest {
 
@@ -38,8 +40,12 @@ class ConversationOutConverterTest {
   private ConversationEntity crearConversationEntity(Integer conversationId, Integer itemId) {
     ConversationEntity o = new ConversationEntity();
     o.setConversationId(conversationId);
-    o.setItemId(itemId);
-    o.setBuyerId(2);
+    AcademicItemEntity itemRef = new AcademicItemEntity();
+    itemRef.setItemId(itemId);
+    o.setItem(itemRef);
+    UserEntity buyerRef = new UserEntity();
+    buyerRef.setUserId(2);
+    o.setBuyer(buyerRef);
     o.setStartedAt(LocalDateTime.of(2026, 9, 1, 10, 0));
     return o;
   }
@@ -88,6 +94,8 @@ class ConversationOutConverterTest {
 
     // ESPERADO
     ConversationEntity conversationEntityEsperado = crearConversationEntity(1, 10);
+    conversationEntityEsperado.setItem(null); // la relación la resuelve el storage
+    conversationEntityEsperado.setBuyer(null); // la relación la resuelve el storage
 
     // EJECUCIÓN
     ConversationEntity res = conversationOutConverter.toEntity(conversationInput);

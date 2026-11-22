@@ -5,13 +5,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.vedruna.palcole.domain.exception.academicItems.AcademicItemNotFoundException;
+import org.vedruna.palcole.domain.exception.categories.CategoryNotFoundException;
 import org.vedruna.palcole.domain.model.AcademicItem;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.domain.ports.outbound.AcademicItemStorage;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.AcademicItemOutConverter;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.CategoryEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.AcademicItemRepository;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.CategoryRepository;
+import org.vedruna.palcole.persistance.exception.UserNotFoundException;
+import org.vedruna.palcole.persistance.model.UserEntity;
+import org.vedruna.palcole.persistance.repository.UserRepository;
 
 @Component
 @AllArgsConstructor
@@ -19,6 +25,8 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
 
   private final AcademicItemRepository academicItemRepository;
   private final AcademicItemOutConverter academicItemOutConverter;
+  private final UserRepository userRepository;
+  private final CategoryRepository categoryRepository;
 
   @Override
   public PageModel<AcademicItem> selectAllAcademicItems(PageableModel pageableModel) {
@@ -43,7 +51,9 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
             .findById(itemId)
             .orElseThrow(() -> new AcademicItemNotFoundException(itemId));
 
-    academicItemEntity.setCategoryId(newAcademicItem.getCategoryId());
+    if (newAcademicItem.getCategoryId() != null) {
+      academicItemEntity.setCategory(findCategory(newAcademicItem.getCategoryId()));
+    }
     academicItemEntity.setTitle(newAcademicItem.getTitle());
     academicItemEntity.setDescription(newAcademicItem.getDescription());
     if (newAcademicItem.getPrice() != null) {
@@ -63,8 +73,10 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
 
   @Override
   public AcademicItem insertAcademicItem(AcademicItem newAcademicItem) {
-    return academicItemOutConverter.toDomain(
-        academicItemRepository.save(academicItemOutConverter.toEntity(newAcademicItem)));
+    AcademicItemEntity academicItemEntity = academicItemOutConverter.toEntity(newAcademicItem);
+    academicItemEntity.setStudent(findUser(newAcademicItem.getStudentId()));
+    academicItemEntity.setCategory(findCategory(newAcademicItem.getCategoryId()));
+    return academicItemOutConverter.toDomain(academicItemRepository.save(academicItemEntity));
   }
 
   @Override
@@ -73,5 +85,13 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
       throw new AcademicItemNotFoundException(itemId);
     }
     academicItemRepository.deleteById(itemId);
+  }
+
+  private UserEntity findUser(Integer id) {
+    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  private CategoryEntity findCategory(Integer id) {
+    return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
   }
 }

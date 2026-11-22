@@ -7,16 +7,27 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.ConversationEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.PromotionEntity;
 
 /** Entidad que representa un usuario y sus detalles de seguridad (implementa UserDetails). */
 @Data
@@ -60,6 +71,42 @@ public class UserEntity implements UserDetails {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "roles_role_id", referencedColumnName = "role_id")
   RoleEntity userRol;
+
+  // 1:N. La FK academic_items.student_id es ON DELETE CASCADE: al borrar un usuario, la base de
+  // datos borra sus artículos (por eso @OnDelete y no un cascade de JPA).
+  @OneToMany(mappedBy = "student")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  List<AcademicItemEntity> academicItems;
+
+  // 1:N. La FK conversations.buyer_id es ON DELETE CASCADE.
+  @OneToMany(mappedBy = "buyer")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  List<ConversationEntity> conversations;
+
+  // N:M con los artículos. favorite_items es una tabla puente pura (solo user_id e item_id), por
+  // eso se mapea con @ManyToMany y no necesita entity propia. UserEntity es el lado dueño.
+  @ManyToMany
+  @JoinTable(
+      name = "favorite_items",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "item_id"))
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  Set<AcademicItemEntity> favoriteItems;
+
+  // N:M con las promociones (tabla puente favorite_promotions).
+  @ManyToMany
+  @JoinTable(
+      name = "favorite_promotions",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "promotion_id"))
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  Set<PromotionEntity> favoritePromotions;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

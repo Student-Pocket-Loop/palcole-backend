@@ -57,6 +57,7 @@ class UserStorageImplTest {
     user.setEmail(email);
     user.setPassword(password);
     user.setEducationalCenter("Vedruna");
+    user.setCreateDate(LocalDateTime.of(2026, 1, 1, 12, 0));
     user.setAccountExpirationDate(LocalDateTime.of(2027, 12, 31, 23, 59));
     user.setCredentialsExpirationDate(LocalDateTime.of(2027, 6, 30, 23, 59));
     user.setIsLocked(false);

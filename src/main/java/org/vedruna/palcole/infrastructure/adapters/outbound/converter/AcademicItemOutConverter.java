@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +14,14 @@ import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.Acade
 @Mapper(componentModel = "spring")
 public interface AcademicItemOutConverter {
 
+  @Mapping(source = "student.userId", target = "studentId")
+  @Mapping(source = "category.categoryId", target = "categoryId")
   AcademicItem toDomain(AcademicItemEntity academicItemEntity);
 
+  @Mapping(target = "student", ignore = true)
+  @Mapping(target = "category", ignore = true)
+  @Mapping(target = "conversations", ignore = true)
+  @Mapping(target = "favoritedBy", ignore = true)
   AcademicItemEntity toEntity(AcademicItem academicItem);
 
   /** Convierte el modelo de paginación del dominio al objeto Pageable de Spring Data. */

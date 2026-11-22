@@ -48,7 +48,7 @@ public class ConversationController {
             selectAllConversationsUseCase.selectAllConversations(pageableModel), pageableModel));
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PostMapping("/")
   public ResponseEntity<ConversationDTO> insertIntoConversation(
       @RequestBody @Valid InsertConversationDTO insertConversationDTO) {

@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure.adapters.outbound.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +14,11 @@ import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.Promo
 @Mapper(componentModel = "spring")
 public interface PromotionOutConverter {
 
+  @Mapping(source = "category.categoryId", target = "categoryId")
   Promotion toDomain(PromotionEntity promotionEntity);
 
+  @Mapping(target = "category", ignore = true)
+  @Mapping(target = "favoritedBy", ignore = true)
   PromotionEntity toEntity(Promotion promotion);
 
   /** Convierte el modelo de paginación del dominio al objeto Pageable de Spring Data. */
