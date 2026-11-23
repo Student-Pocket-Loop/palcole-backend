@@ -127,7 +127,7 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 }
 
 ### USERS (solo ADMIN) - PUT
-PUT {{baseUrl}}/users/3
+PUT {{baseUrl}}/users/2
 Content-Type: application/json
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
