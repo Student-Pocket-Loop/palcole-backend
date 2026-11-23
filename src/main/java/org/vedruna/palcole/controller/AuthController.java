@@ -3,6 +3,7 @@ package org.vedruna.palcole.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,7 +37,30 @@ public interface AuthController {
         @ApiResponse(
             responseCode = "201",
             description = "Usuario registrado correctamente",
-            content = @Content(schema = @Schema(implementation = UserDto.class))),
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserDto.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "Usuario registrado",
+                          summary = "Respuesta tras registrar a joaquin",
+                          value =
+                              """
+                              {
+                                "userId": 1,
+                                "rolesRoleId": 2,
+                                "username": "joaquin",
+                                "email": "joaquin@localhost.com",
+                                "educationalCenter": null,
+                                "createDate": "2026-09-01T10:00:00",
+                                "accountExpirationDate": null,
+                                "isLocked": false,
+                                "credentialsExpirationDate": null,
+                                "isEnabled": true
+                              }
+                              """)
+                    })),
         @ApiResponse(
             responseCode = "400",
             description = "Datos de entrada inválidos o formato incorrecto",
@@ -46,9 +70,32 @@ public interface AuthController {
             description = "El usuario o correo electrónico ya existe",
             content = @Content)
       })
-  @SecurityRequirements() // Indica en Swagger que este endpoint es público (no pide token)
+  @SecurityRequirements()
   @PostMapping(value = "/register")
-  ResponseEntity<UserDto> register(@RequestBody @Valid RegisterRequestDto request);
+  ResponseEntity<UserDto> register(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "Datos de registro del nuevo usuario",
+              required = true,
+              content =
+                  @Content(
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = RegisterRequestDto.class),
+                      examples = {
+                        @ExampleObject(
+                            name = "Registro Ejemplo",
+                            summary = "Datos de registro de joaquin",
+                            value =
+                                """
+                                {
+                                    "username": "joaquin",
+                                    "password": "Abcd1234",
+                                    "email": "joaquin@localhost.com"
+                                }
+                                """)
+                      }))
+          @RequestBody
+          @Valid
+          RegisterRequestDto request);
 
   @Operation(
       summary = "Iniciar sesión",
@@ -59,7 +106,32 @@ public interface AuthController {
         @ApiResponse(
             responseCode = "200",
             description = "Autenticación exitosa",
-            content = @Content(schema = @Schema(implementation = AuthResponseDto.class))),
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponseDto.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "Respuesta Login Admin (joaquin)",
+                          summary = "Tokens devueltos para el administrador",
+                          value =
+                              """
+                              {
+                                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.admin_joaquin_token...",
+                                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.admin_refresh_token..."
+                              }
+                              """),
+                      @ExampleObject(
+                          name = "Respuesta Login User (manuel)",
+                          summary = "Tokens devueltos para un usuario estándar",
+                          value =
+                              """
+                              {
+                                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.user_manuel_token...",
+                                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.user_refresh_token..."
+                              }
+                              """)
+                    })),
         @ApiResponse(
             responseCode = "400",
             description = "Faltan campos obligatorios",
@@ -69,9 +141,41 @@ public interface AuthController {
             description = "Credenciales incorrectas",
             content = @Content)
       })
-  @SecurityRequirements() // Endpoint público (no pide token)
+  @SecurityRequirements()
   @PostMapping(value = "/login")
-  ResponseEntity<AuthResponseDto> login(@RequestBody @Valid LoginRequestDto request);
+  ResponseEntity<AuthResponseDto> login(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "Credenciales de acceso (elige entre Admin o Usuario Normal)",
+              required = true,
+              content =
+                  @Content(
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = LoginRequestDto.class),
+                      examples = {
+                        @ExampleObject(
+                            name = "LOGIN ADMIN (joaquin)",
+                            summary = "Credenciales de administrador",
+                            value =
+                                """
+                                {
+                                    "username": "joaquin",
+                                    "password": "Abcd1234"
+                                }
+                                """),
+                        @ExampleObject(
+                            name = "LOGIN USER (manuel)",
+                            summary = "Credenciales de usuario normal",
+                            value =
+                                """
+                                {
+                                    "username": "manuel",
+                                    "password": "Abcd1234"
+                                }
+                                """)
+                      }))
+          @RequestBody
+          @Valid
+          LoginRequestDto request);
 
   @Operation(
       summary = "Obtener perfil del usuario actual",
@@ -81,7 +185,48 @@ public interface AuthController {
         @ApiResponse(
             responseCode = "200",
             description = "Datos del usuario recuperados correctamente",
-            content = @Content(schema = @Schema(implementation = UserDto.class))),
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserDto.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "Perfil Usuario Normal (manuel)",
+                          summary = "Datos devueltos al consultar /me con token de usuario",
+                          value =
+                              """
+                              {
+                                "userId": 2,
+                                "rolesRoleId": 2,
+                                "username": "manuel",
+                                "email": "manuel@localhost.com",
+                                "educationalCenter": "Santa Joaquina de Vedruna",
+                                "createDate": "2026-09-01T10:15:00",
+                                "accountExpirationDate": null,
+                                "isLocked": false,
+                                "credentialsExpirationDate": null,
+                                "isEnabled": true
+                              }
+                              """),
+                      @ExampleObject(
+                          name = "Perfil Administrador (joaquin)",
+                          summary = "Datos devueltos al consultar /me con token de admin",
+                          value =
+                              """
+                              {
+                                "userId": 1,
+                                "rolesRoleId": 1,
+                                "username": "joaquin",
+                                "email": "joaquin@localhost.com",
+                                "educationalCenter": "Santa Joaquina de Vedruna",
+                                "createDate": "2026-09-01T10:00:00",
+                                "accountExpirationDate": null,
+                                "isLocked": false,
+                                "credentialsExpirationDate": null,
+                                "isEnabled": true
+                              }
+                              """)
+                    })),
         @ApiResponse(
             responseCode = "401",
             description = "Token ausente, inválido o expirado",
@@ -98,13 +243,49 @@ public interface AuthController {
         @ApiResponse(
             responseCode = "200",
             description = "Token refrescado exitosamente",
-            content = @Content(schema = @Schema(implementation = AuthResponseDto.class))),
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthResponseDto.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "Tokens renovados",
+                          summary = "Nuevo par de tokens generado",
+                          value =
+                              """
+                              {
+                                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new_access_token...",
+                                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new_refresh_token..."
+                              }
+                              """)
+                    })),
         @ApiResponse(
             responseCode = "401",
             description = "Refresh token inválido o expirado",
             content = @Content)
       })
-  @SecurityRequirements() // Endpoint público (no pide cabecera Bearer, recibe el token en el body)
+  @SecurityRequirements()
   @PostMapping("/refresh")
-  ResponseEntity<AuthResponseDto> refreshToken(@RequestBody @Valid RefreshRequestDto request);
+  ResponseEntity<AuthResponseDto> refreshToken(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "Refresh token obtenido en el inicio de sesión",
+              required = true,
+              content =
+                  @Content(
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = RefreshRequestDto.class),
+                      examples = {
+                        @ExampleObject(
+                            name = "Refresh Token",
+                            summary = "Ejemplo de petición de refresco",
+                            value =
+                                """
+                                {
+                                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh_token..."
+                                }
+                                """)
+                      }))
+          @RequestBody
+          @Valid
+          RefreshRequestDto request);
 }
