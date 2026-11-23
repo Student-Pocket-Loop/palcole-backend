@@ -57,3 +57,11 @@ auth:
   access-token-expiration: 2592000000
   refresh-token-secret-key: vtOOzscw8YTmfExujYAnG/riprsNbnpsBmYywhQgJkU=
   refresh-token-expiration: 604800000 
+
+  springdoc:
+    swagger-ui:
+      tags-sorter: alpha
+      operations-sorter: method
+      persist-authorization: true
+      display-request-duration: true
+      filter: true

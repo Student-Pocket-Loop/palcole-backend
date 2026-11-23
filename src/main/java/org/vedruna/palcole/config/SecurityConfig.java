@@ -56,10 +56,8 @@ public class SecurityConfig {
                     // Permite acceso sin autenticación a endpoints públicos y de documentación
                     .requestMatchers("/api/v1/main/public")
                     .permitAll()
-                    .requestMatchers("/v3/api-docs")
-                    .permitAll() // OpenAPI/Swagger Docs
-                    .requestMatchers("/swagger-ui/index.html")
-                    .permitAll() // Interfaz de Swagger
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                    .permitAll() // OpenAPI/Swagger Docs y todos sus recursos estáticos
                     .requestMatchers("/api/v1/auth/**")
                     .permitAll() // Todos los endpoints de /auth (login, register)
                     .requestMatchers("/error")
