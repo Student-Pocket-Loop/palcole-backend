@@ -1,6 +1,7 @@
 package org.vedruna.palcole.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
+import org.vedruna.palcole.domain.exception.users.InvalidCurrentPasswordException;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
@@ -403,4 +405,101 @@ class UserStorageImplTest {
 
     verify(userRepository, never()).deleteById(any());
   }
+
+  @Test
+  @DisplayName("Test storage changePassword Ok")
+  void changePasswordOkTest() {
+
+    // INPUT
+    Integer userIdInput = 1;
+    String currentPasswordInput = "OldPassword123!";
+    String newPasswordInput = "NewPassword456!";
+    String encodedCurrentPassword = "$2a$10$encodedOldPasswordHash";
+    String encodedNewPassword = "$2a$10$encodedNewPasswordHash";
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUserId(userIdInput);
+    userEntity.setPassword(encodedCurrentPassword);
+
+    // MOCKS
+    when(userRepository.findById(userIdInput)).thenReturn(Optional.of(userEntity));
+    when(passwordEncoder.matches(currentPasswordInput, encodedCurrentPassword)).thenReturn(true);
+    when(passwordEncoder.encode(newPasswordInput)).thenReturn(encodedNewPassword);
+    when(userRepository.save(userEntity)).thenReturn(userEntity);
+
+    // EJECUCIÓN Y VALIDACIONES
+    assertAll(
+        () -> {
+          assertDoesNotThrow(
+              () ->
+                  userStorageImpl.changePassword(
+                      userIdInput, currentPasswordInput, newPasswordInput));
+          assertEquals(encodedNewPassword, userEntity.getPassword());
+          verify(userRepository).findById(userIdInput);
+          verify(passwordEncoder).matches(currentPasswordInput, encodedCurrentPassword);
+          verify(passwordEncoder).encode(newPasswordInput);
+          verify(userRepository).save(userEntity);
+        });
+  }
+
+  @Test
+  @DisplayName("Test storage changePassword Ko UserNotFoundException")
+  void changePasswordKoUserNotFoundTest() {
+
+    // INPUT
+    Integer userIdInput = 99;
+    String currentPasswordInput = "OldPassword123!";
+    String newPasswordInput = "NewPassword456!";
+
+    // MOCKS
+    when(userRepository.findById(userIdInput)).thenReturn(Optional.empty());
+
+    // EJECUCIÓN Y VALIDACIONES
+    assertAll(
+        () -> {
+          assertThrows(
+              UserNotFoundException.class,
+              () ->
+                  userStorageImpl.changePassword(
+                      userIdInput, currentPasswordInput, newPasswordInput));
+          verify(userRepository).findById(userIdInput);
+          verify(passwordEncoder, never()).matches(any(), any());
+          verify(passwordEncoder, never()).encode(any());
+          verify(userRepository, never()).save(any());
+        });
+  }
+
+  @Test
+  @DisplayName("Test storage changePassword Ko InvalidCurrentPasswordException")
+  void changePasswordKoInvalidCurrentPasswordTest() {
+
+    // INPUT
+    Integer userIdInput = 1;
+    String currentPasswordInput = "WrongPassword123!";
+    String newPasswordInput = "NewPassword456!";
+    String encodedCurrentPassword = "$2a$10$encodedOldPasswordHash";
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUserId(userIdInput);
+    userEntity.setPassword(encodedCurrentPassword);
+
+    // MOCKS
+    when(userRepository.findById(userIdInput)).thenReturn(Optional.of(userEntity));
+    when(passwordEncoder.matches(currentPasswordInput, encodedCurrentPassword)).thenReturn(false);
+
+    // EJECUCIÓN Y VALIDACIONES
+    assertAll(
+        () -> {
+          assertThrows(
+              InvalidCurrentPasswordException.class,
+              () ->
+                  userStorageImpl.changePassword(
+                      userIdInput, currentPasswordInput, newPasswordInput));
+          verify(userRepository).findById(userIdInput);
+          verify(passwordEncoder).matches(currentPasswordInput, encodedCurrentPassword);
+          verify(passwordEncoder, never()).encode(any());
+          verify(userRepository, never()).save(any());
+        });
+  }
+
 }
