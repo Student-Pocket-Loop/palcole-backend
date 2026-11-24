@@ -348,27 +348,26 @@ public class UserController {
   }
 
   @Operation(
-        summary = "Cambiar la contraseña del usuario autenticado",
-        description = "Recibe la contraseña actual y la nueva. Requiere rol USER o ADMIN.")
-    @ApiResponses(
-        value = {
+      summary = "Cambiar la contraseña del usuario autenticado",
+      description = "Recibe la contraseña actual y la nueva. Requiere rol USER o ADMIN.")
+  @ApiResponses(
+      value = {
         @ApiResponse(responseCode = "204", description = "Contraseña cambiada", content = @Content),
         @ApiResponse(
             responseCode = "400",
             description = "Contraseña actual incorrecta, nueva inválida o igual a la actual",
             content = @Content),
         @ApiResponse(responseCode = "401", description = "No autenticado", content = @Content)
-        })
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @PutMapping("/me/password")
-    public ResponseEntity<Void> changePassword(
-        @Parameter(hidden = true) @AuthenticationPrincipal UserEntity loggedUser,
-        @RequestBody @Valid ChangePasswordDTO changePasswordDTO) {
+      })
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PutMapping("/me/password")
+  public ResponseEntity<Void> changePassword(
+      @Parameter(hidden = true) @AuthenticationPrincipal UserEntity loggedUser,
+      @RequestBody @Valid ChangePasswordDTO changePasswordDTO) {
     changePasswordUseCase.changePassword(
         loggedUser.getUserId(),
         changePasswordDTO.getCurrentPassword(),
         changePasswordDTO.getNewPassword());
     return ResponseEntity.noContent().build();
-    }
-
+  }
 }

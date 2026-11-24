@@ -501,5 +501,4 @@ class UserStorageImplTest {
           verify(userRepository, never()).save(any());
         });
   }
-
 }

@@ -327,3 +327,5 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 ### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - DELETE
 DELETE {{baseUrl}}/conversations/1
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+swagger:http://localhost:8080/swagger-ui/index.html#/

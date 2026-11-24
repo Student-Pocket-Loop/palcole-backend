@@ -36,7 +36,9 @@ class ChangePasswordUseCaseImplTest {
     String newPasswordInput = "NewPassword456!";
 
     // MOCKS
-    doNothing().when(userStorage).changePassword(userIdInput, currentPasswordInput, newPasswordInput);
+    doNothing()
+        .when(userStorage)
+        .changePassword(userIdInput, currentPasswordInput, newPasswordInput);
 
     // EJECUCIÓN Y VALIDACIONES
     assertAll(

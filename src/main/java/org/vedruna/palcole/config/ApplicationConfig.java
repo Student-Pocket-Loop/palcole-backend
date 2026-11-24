@@ -351,5 +351,4 @@ public class ApplicationConfig {
   ChangePasswordUseCase getChangePasswordUseCase(UserStorage userStorage) {
     return new ChangePasswordUseCaseImpl(userStorage);
   }
-
 }

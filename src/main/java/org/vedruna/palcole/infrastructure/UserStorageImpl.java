@@ -118,5 +118,4 @@ public class UserStorageImpl implements UserStorage {
     userEntity.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(userEntity);
   }
-
 }
