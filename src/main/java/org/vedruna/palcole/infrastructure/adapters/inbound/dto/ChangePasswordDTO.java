@@ -13,7 +13,10 @@ public class ChangePasswordDTO {
   @NotBlank(message = "La contraseña actual no puede estar vacia")
   String currentPassword;
 
-  @Schema(description = "Nueva contraseña (8-255 caracteres)", example = "NuevaPass2026", format = "password")
+  @Schema(
+      description = "Nueva contraseña (8-255 caracteres)",
+      example = "NuevaPass2026",
+      format = "password")
   @NotBlank(message = "La nueva contraseña no puede estar vacia")
   @Size(min = 8, max = 255, message = "La nueva contraseña debe tener entre 8 y 255 caracteres")
   String newPassword;

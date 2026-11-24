@@ -1,5 +1,6 @@
 package org.vedruna.palcole.application.User;
 
+import org.vedruna.palcole.domain.exception.users.SamePasswordException;
 import org.vedruna.palcole.domain.ports.inbound.user.ChangePasswordUseCase;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
 
