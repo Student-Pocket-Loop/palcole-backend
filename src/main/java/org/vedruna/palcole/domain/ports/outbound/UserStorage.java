@@ -15,4 +15,6 @@ public interface UserStorage {
   User insertUser(User newUser);
 
   void deleteUser(Integer userId);
+
+  void changePassword(Integer userId, String currentPassword, String newPassword);
 }

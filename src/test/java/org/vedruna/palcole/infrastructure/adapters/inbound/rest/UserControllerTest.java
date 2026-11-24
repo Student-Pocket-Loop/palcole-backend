@@ -26,19 +26,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.vedruna.palcole.domain.exception.users.InvalidCurrentPasswordException;
+import org.vedruna.palcole.domain.exception.users.SamePasswordException;
 import org.vedruna.palcole.domain.exception.users.UserAlreadyExistsException;
 import org.vedruna.palcole.domain.exception.users.UserNotFoundException;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
+import org.vedruna.palcole.domain.ports.inbound.user.ChangePasswordUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.DeleteUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.infrastructure.adapters.inbound.converter.UserInConverter;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.ChangePasswordDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.user.InsertUserDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.user.UserDTO;
+import org.vedruna.palcole.persistance.model.UserEntity;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -52,6 +57,8 @@ class UserControllerTest {
   @Mock private SelectUserByIdUseCase selectUserByIdUseCase;
 
   @Mock private UpdateUserUseCase updateUserUseCase;
+
+  @Mock private ChangePasswordUseCase changePasswordUseCase;
 
   @Mock private UserInConverter userInConverter;
 
@@ -394,5 +401,114 @@ class UserControllerTest {
         assertThrows(UserNotFoundException.class, () -> userController.deleteUser(userIdInput));
 
     assertEquals("No se encuentra el usuario con id: 99", ex.getMessage());
+  }
+
+  @Test
+  @DisplayName("Test controller changePassword Ok")
+  void changePasswordOkTest() {
+
+    // INPUT
+    Integer userIdInput = 1;
+    UserEntity loggedUserInput = new UserEntity();
+    loggedUserInput.setUserId(userIdInput);
+
+    ChangePasswordDTO changePasswordDTOInput = new ChangePasswordDTO();
+    changePasswordDTOInput.setCurrentPassword("OldPassword123!");
+    changePasswordDTOInput.setNewPassword("NewPassword456!");
+
+    // MOCKS
+    doNothing()
+        .when(changePasswordUseCase)
+        .changePassword(
+            userIdInput,
+            changePasswordDTOInput.getCurrentPassword(),
+            changePasswordDTOInput.getNewPassword());
+
+    // EJECUCIÓN
+    ResponseEntity<Void> res =
+        userController.changePassword(loggedUserInput, changePasswordDTOInput);
+
+    // VALIDACIONES
+    assertAll(
+        () -> {
+          assertNotNull(res);
+          assertEquals(HttpStatus.NO_CONTENT, res.getStatusCode());
+          assertNull(res.getBody());
+          verify(changePasswordUseCase)
+              .changePassword(
+                  userIdInput,
+                  changePasswordDTOInput.getCurrentPassword(),
+                  changePasswordDTOInput.getNewPassword());
+        });
+  }
+
+  @Test
+  @DisplayName("Test controller changePassword Ko SamePasswordException")
+  void changePasswordKoSamePasswordTest() {
+
+    // INPUT
+    Integer userIdInput = 1;
+    UserEntity loggedUserInput = new UserEntity();
+    loggedUserInput.setUserId(userIdInput);
+
+    ChangePasswordDTO changePasswordDTOInput = new ChangePasswordDTO();
+    changePasswordDTOInput.setCurrentPassword("SamePassword123!");
+    changePasswordDTOInput.setNewPassword("SamePassword123!");
+
+    // MOCKS
+    doThrow(new SamePasswordException())
+        .when(changePasswordUseCase)
+        .changePassword(
+            userIdInput,
+            changePasswordDTOInput.getCurrentPassword(),
+            changePasswordDTOInput.getNewPassword());
+
+    // EJECUCIÓN Y VALIDACIONES
+    assertAll(
+        () -> {
+          assertThrows(
+              SamePasswordException.class,
+              () -> userController.changePassword(loggedUserInput, changePasswordDTOInput));
+          verify(changePasswordUseCase)
+              .changePassword(
+                  userIdInput,
+                  changePasswordDTOInput.getCurrentPassword(),
+                  changePasswordDTOInput.getNewPassword());
+        });
+  }
+
+  @Test
+  @DisplayName("Test controller changePassword Ko InvalidCurrentPasswordException")
+  void changePasswordKoInvalidCurrentPasswordTest() {
+
+    // INPUT
+    Integer userIdInput = 1;
+    UserEntity loggedUserInput = new UserEntity();
+    loggedUserInput.setUserId(userIdInput);
+
+    ChangePasswordDTO changePasswordDTOInput = new ChangePasswordDTO();
+    changePasswordDTOInput.setCurrentPassword("WrongPassword123!");
+    changePasswordDTOInput.setNewPassword("NewPassword456!");
+
+    // MOCKS
+    doThrow(new InvalidCurrentPasswordException())
+        .when(changePasswordUseCase)
+        .changePassword(
+            userIdInput,
+            changePasswordDTOInput.getCurrentPassword(),
+            changePasswordDTOInput.getNewPassword());
+
+    // EJECUCIÓN Y VALIDACIONES
+    assertAll(
+        () -> {
+          assertThrows(
+              InvalidCurrentPasswordException.class,
+              () -> userController.changePassword(loggedUserInput, changePasswordDTOInput));
+          verify(changePasswordUseCase)
+              .changePassword(
+                  userIdInput,
+                  changePasswordDTOInput.getCurrentPassword(),
+                  changePasswordDTOInput.getNewPassword());
+        });
   }
 }
