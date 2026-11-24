@@ -35,6 +35,11 @@ import org.vedruna.palcole.application.favoritePromotions.DeleteFavoritePromotio
 import org.vedruna.palcole.application.favoritePromotions.NewFavoritePromotionUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.SelectAllFavoritePromotionsUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.SelectFavoritePromotionByIdUseCaseImpl;
+import org.vedruna.palcole.application.messages.DeleteMessageUseCaseImpl;
+import org.vedruna.palcole.application.messages.NewMessageUseCaseImpl;
+import org.vedruna.palcole.application.messages.SelectAllMessagesUseCaseImpl;
+import org.vedruna.palcole.application.messages.SelectMessageByIdUseCaseImpl;
+import org.vedruna.palcole.application.messages.UpdateMessageUseCaseImpl;
 import org.vedruna.palcole.application.promotions.DeletePromotionUseCaseImpl;
 import org.vedruna.palcole.application.promotions.NewPromotionUseCaseImpl;
 import org.vedruna.palcole.application.promotions.SelectAllPromotionsUseCaseImpl;
@@ -63,6 +68,11 @@ import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.DeleteFavorit
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.NewFavoritePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.SelectAllFavoritePromotionsUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.SelectFavoritePromotionByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.messages.DeleteMessageUseCase;
+import org.vedruna.palcole.domain.ports.inbound.messages.NewMessageUseCase;
+import org.vedruna.palcole.domain.ports.inbound.messages.SelectAllMessagesUseCase;
+import org.vedruna.palcole.domain.ports.inbound.messages.SelectMessageByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.messages.UpdateMessageUseCase;
 import org.vedruna.palcole.domain.ports.inbound.promotions.DeletePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.promotions.NewPromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.promotions.SelectAllPromotionsUseCase;
@@ -82,6 +92,7 @@ import org.vedruna.palcole.domain.ports.outbound.AcademicItemStorage;
 import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
 import org.vedruna.palcole.domain.ports.outbound.ConversationStorage;
 import org.vedruna.palcole.domain.ports.outbound.FavoritePromotionStorage;
+import org.vedruna.palcole.domain.ports.outbound.MessageStorage;
 import org.vedruna.palcole.domain.ports.outbound.PromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.RoleStorage;
 import org.vedruna.palcole.domain.ports.outbound.UserStorage;
@@ -343,5 +354,30 @@ public class ApplicationConfig {
   @Bean
   DeleteConversationUseCase getDeleteConversationUseCase(ConversationStorage conversationStorage) {
     return new DeleteConversationUseCaseImpl(conversationStorage);
+  }
+
+  @Bean
+  NewMessageUseCase getNewMessageUseCase(MessageStorage messageStorage) {
+    return new NewMessageUseCaseImpl(messageStorage);
+  }
+
+  @Bean
+  SelectAllMessagesUseCase getSelectAllMessagesUseCase(MessageStorage messageStorage) {
+    return new SelectAllMessagesUseCaseImpl(messageStorage);
+  }
+
+  @Bean
+  SelectMessageByIdUseCase getSelectMessageByIdUseCase(MessageStorage messageStorage) {
+    return new SelectMessageByIdUseCaseImpl(messageStorage);
+  }
+
+  @Bean
+  UpdateMessageUseCase getUpdateMessageUseCase(MessageStorage messageStorage) {
+    return new UpdateMessageUseCaseImpl(messageStorage);
+  }
+
+  @Bean
+  DeleteMessageUseCase getDeleteMessageUseCase(MessageStorage messageStorage) {
+    return new DeleteMessageUseCaseImpl(messageStorage);
   }
 }
