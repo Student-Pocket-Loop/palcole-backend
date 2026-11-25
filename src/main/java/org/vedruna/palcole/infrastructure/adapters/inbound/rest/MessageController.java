@@ -43,7 +43,7 @@ public class MessageController {
   private final UpdateMessageUseCase updateMessageUseCase;
   private final MessageInConverter messageInConverter;
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/")
   public ResponseEntity<Page<MessageDTO>> getAllMessages(Pageable pageable) {
     PageableModel pageableModel = messageInConverter.toPageableModel(pageable);
@@ -52,7 +52,7 @@ public class MessageController {
             selectAllMessagesUseCase.selectAllMessages(pageableModel), pageableModel));
   }
 
-  @PreAuthorize("hasRole('ADMIN') or #insertMessageDTO.senderId == principal.userId")
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PostMapping("/")
   public ResponseEntity<MessageDTO> insertIntoMessage(
       @RequestBody @Valid InsertMessageDTO insertMessageDTO) {
@@ -68,6 +68,7 @@ public class MessageController {
         messageInConverter.toDto(selectMessageByIdUseCase.selectMessageById(messageId)));
   }
 
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PutMapping("/{messageId}")
   public ResponseEntity<MessageDTO> updateMessage(
       @PathVariable Integer messageId, @RequestBody @Valid UpdateMessageDTO updateMessageDTO) {
@@ -77,6 +78,7 @@ public class MessageController {
                 messageId, messageInConverter.toDomainUpdate(updateMessageDTO))));
   }
 
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @DeleteMapping("/{messageId}")
   public ResponseEntity<Void> deleteMessage(@PathVariable Integer messageId) {
     deleteMessageUseCase.deleteMessage(messageId);
