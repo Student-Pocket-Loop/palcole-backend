@@ -48,6 +48,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
@@ -131,8 +139,29 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>2.45.0</version>
+				<configuration>
+					<java>
+						<removeUnusedImports />
+
+						<googleJavaFormat>
+							<version>1.28.0</version>
+							<style>GOOGLE</style>
+						</googleJavaFormat>
+
+						<endWithNewline />
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<!-- Plugin responsable de compilar el código JAVA. -->
@@ -181,9 +210,11 @@
                         <configuration>
                             <excludes>
                                 <!-- Excluye las clases Application del análisis -->
-                                <exclude>**/*Application.class</exclude>
+                                <exclude>**/*Application.*</exclude>
                                 <!-- Excluye las clases de configuración del análisis -->
                                 <exclude>**/config/**</exclude>
+                                <!-- Excluye las clases de model del análisis -->
+                                <exclude>**/model/**</exclude>
                                 <!-- Excluye las clases de repositorio del análisis -->
                                 <exclude>**/repository/**</exclude>
                                 <!-- Excluye las clases de dto del análisis -->
@@ -211,6 +242,20 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <excludes>
+                        <!-- Excluye las clases Application del análisis y verificación -->
+                        <exclude>**/*Application.*</exclude>
+                        <!-- Excluye las clases de configuración del análisis y verificación -->
+                        <exclude>**/config/**</exclude>
+                        <!-- Excluye las clases de model del análisis y verificación -->
+                        <exclude>**/model/**</exclude>
+                        <!-- Excluye las clases de repositorio del análisis y verificación -->
+                        <exclude>**/repository/**</exclude>
+                        <!-- Excluye las clases de dto del análisis y verificación -->
+                        <exclude>**/dto/**</exclude>
+                        <!-- Excluye las clases de exception del análisis y verificación -->
+                        <exclude>**/exception/**</exclude>
+                    </excludes>
                     <rules>
                         <!-- Reglas para todo el proyecto (BUNDLE) -->
                         <rule>

@@ -1,0 +1,331 @@
+# =====================================================================
+#  PALCOLE BACKEND - Peticiones de ejemplo (REST Client / IntelliJ HTTP)
+#  Ejecuta primero LOGIN ADMIN (y LOGIN USER si pruebas con ese rol).
+#  El token se reutiliza solo: {{loginAdmin.response.body.$.access_token}}
+#  Datos de ejemplo en src/main/resources/db/mysql/data.sql
+# =====================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
+### REGISTER
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "joaquin",
+    "password": "Abcd1234",
+    "email": "joaquin@localhost.com"
+}
+
+### LOGIN ADMIN
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "joaquin",
+    "password": "Abcd1234"
+}
+
+### LOGIN USER
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "manuel",
+    "password": "Abcd1234"
+}
+
+### REFRESH
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "{{loginAdmin.response.body.$.refresh_token}}"
+}
+
+### PUBLIC
+GET {{baseUrl}}/main/public
+
+### PRIVATE
+GET {{baseUrl}}/main/private
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+### PROTECTED (solo ADMIN)
+GET {{baseUrl}}/main/admin
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ME
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+# =====================================================================
+#  ROLES (solo ADMIN)
+# =====================================================================
+
+### ROLES (solo ADMIN) - GET ALL
+GET {{baseUrl}}/roles/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/roles/?page=0&size=5&sort=name,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - GET BY ID
+GET {{baseUrl}}/roles/2
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ROLES (solo ADMIN) - POST
+POST {{baseUrl}}/roles/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "NUEVO"
+}
+
+### ROLES (solo ADMIN) - PUT
+PUT {{baseUrl}}/roles/3
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "ANTIGUO"
+}
+
+### ROLES (solo ADMIN) - DELETE
+DELETE {{baseUrl}}/roles/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  USERS (solo ADMIN)
+# =====================================================================
+
+### USERS (solo ADMIN) - GET ALL
+GET {{baseUrl}}/users/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### USERS (solo ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/users/?page=0&size=5&sort=username,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### USERS (solo ADMIN) - GET BY ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### USERS (solo ADMIN) - POST
+POST {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "username": "alumno1",
+    "email": "alumno1@localhost.es",
+    "password": "Abcd1234",
+    "educationalCenter": "Santa Joaquina de Vedruna"
+}
+
+### USERS (solo ADMIN) - PUT
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "roleId": 2,
+    "username": "alumno1_editado",
+    "email": "alumno1@localhost.es",
+    "password": "Abcd1234",
+    "educationalCenter": "Santa Joaquina de Vedruna",
+    "isLocked": false,
+    "isEnabled": true
+}
+
+### USERS (solo ADMIN) - DELETE
+DELETE {{baseUrl}}/users/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### USERS (USER/ADMIN) - CAMBIAR CONTRASEÑA
+PUT {{baseUrl}}/users/me/password
+Content-Type: application/json
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+{
+    "currentPassword": "Abcd1234",
+    "newPassword": "NuevaPass2026"
+}
+
+# =====================================================================
+#  CATEGORIES (lectura: cualquier usuario; escritura: ADMIN)
+# =====================================================================
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET ALL
+GET {{baseUrl}}/categories/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/categories/?page=0&size=5&sort=name,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - GET BY ID
+GET {{baseUrl}}/categories/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - POST
+POST {{baseUrl}}/categories/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "Idiomas"
+}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - PUT
+PUT {{baseUrl}}/categories/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "Idiomas y diccionarios"
+}
+
+### CATEGORIES (lectura: cualquier usuario; escritura: ADMIN) - DELETE
+DELETE {{baseUrl}}/categories/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN)
+# =====================================================================
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET ALL
+GET {{baseUrl}}/promotions/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/promotions/?page=0&size=5&sort=title,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - GET BY ID
+GET {{baseUrl}}/promotions/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - POST
+POST {{baseUrl}}/promotions/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Mochilas escolares",
+    "description": "Descuento en mochilas",
+    "originalPrice": 40.00,
+    "discountPrice": 30.00,
+    "discountPercentage": 25,
+    "promoCode": "MOCHI25",
+    "startDate": "2026-09-01",
+    "endDate": "2026-10-15"
+}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - PUT
+PUT {{baseUrl}}/promotions/3
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 3,
+    "title": "Mochilas escolares (ampliada)",
+    "description": "Descuento en mochilas",
+    "originalPrice": 40.00,
+    "discountPrice": 28.00,
+    "discountPercentage": 30,
+    "promoCode": "MOCHI30",
+    "startDate": "2026-09-01",
+    "endDate": "2026-10-31"
+}
+
+### PROMOTIONS (lectura: cualquier usuario; escritura: ADMIN) - DELETE
+DELETE {{baseUrl}}/promotions/3
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  ACADEMIC ITEMS (cualquier usuario autenticado)
+# =====================================================================
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET ALL
+GET {{baseUrl}}/academic-items/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/academic-items/?page=0&size=5&sort=title,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - GET BY ID
+GET {{baseUrl}}/academic-items/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - POST
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 1,
+    "title": "Libro de Programación",
+    "description": "Apenas usado",
+    "price": 12.50,
+    "itemCondition": "COMO_NUEVO",
+    "listingType": "VENTA",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - PUT
+PUT {{baseUrl}}/academic-items/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "categoryId": 1,
+    "title": "Libro de Programación",
+    "description": "Apenas usado",
+    "price": 10.00,
+    "itemCondition": "COMO_NUEVO",
+    "saleStatus": "RESERVADO",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
+
+### ACADEMIC ITEMS (cualquier usuario autenticado) - DELETE
+DELETE {{baseUrl}}/academic-items/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+# =====================================================================
+#  CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT)
+# =====================================================================
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET ALL
+GET {{baseUrl}}/conversations/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/conversations/?page=0&size=5&sort=conversationId,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - GET BY ID
+GET {{baseUrl}}/conversations/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - POST
+POST {{baseUrl}}/conversations/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "itemId": 1,
+    "buyerId": 1
+}
+
+### CONVERSATIONS (GET ALL y DELETE: ADMIN; sin PUT) - DELETE
+DELETE {{baseUrl}}/conversations/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+swagger:http://localhost:8080/swagger-ui/index.html#/
