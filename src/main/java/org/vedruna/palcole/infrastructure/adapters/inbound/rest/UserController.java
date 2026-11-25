@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,14 +28,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
+import org.vedruna.palcole.domain.ports.inbound.user.ChangePasswordUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.DeleteUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectUserByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.infrastructure.adapters.inbound.converter.UserInConverter;
+import org.vedruna.palcole.infrastructure.adapters.inbound.dto.ChangePasswordDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.user.InsertUserDTO;
 import org.vedruna.palcole.infrastructure.adapters.inbound.dto.user.UserDTO;
+import org.vedruna.palcole.persistance.model.UserEntity;
 
 @Tag(
     name = "Users",
@@ -53,6 +57,7 @@ public class UserController {
   private final SelectUserByIdUseCase selectUserByIdUseCase;
   private final UpdateUserUseCase updateUserUseCase;
   private final UserInConverter userInConverter;
+  private final ChangePasswordUseCase changePasswordUseCase;
 
   @Operation(
       summary = "Listar todos los usuarios (paginado)",
@@ -339,6 +344,30 @@ public class UserController {
       @Parameter(description = "ID único del usuario a eliminar", example = "3") @PathVariable
           Integer userId) {
     deleteUserUseCase.deleteUser(userId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(
+      summary = "Cambiar la contraseña del usuario autenticado",
+      description = "Recibe la contraseña actual y la nueva. Requiere rol USER o ADMIN.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "204", description = "Contraseña cambiada", content = @Content),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Contraseña actual incorrecta, nueva inválida o igual a la actual",
+            content = @Content),
+        @ApiResponse(responseCode = "401", description = "No autenticado", content = @Content)
+      })
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PutMapping("/me/password")
+  public ResponseEntity<Void> changePassword(
+      @Parameter(hidden = true) @AuthenticationPrincipal UserEntity loggedUser,
+      @RequestBody @Valid ChangePasswordDTO changePasswordDTO) {
+    changePasswordUseCase.changePassword(
+        loggedUser.getUserId(),
+        changePasswordDTO.getCurrentPassword(),
+        changePasswordDTO.getNewPassword());
     return ResponseEntity.noContent().build();
   }
 }

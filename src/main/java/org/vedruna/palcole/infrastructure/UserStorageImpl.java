@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.vedruna.palcole.domain.exception.roles.RoleNotFoundException;
+import org.vedruna.palcole.domain.exception.users.InvalidCurrentPasswordException;
 import org.vedruna.palcole.domain.model.User;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
@@ -103,5 +104,18 @@ public class UserStorageImpl implements UserStorage {
 
   private RoleEntity findRole(Integer roleId) {
     return roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
+  }
+
+  @Override
+  public void changePassword(Integer userId, String currentPassword, String newPassword) {
+    UserEntity userEntity =
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+    if (!passwordEncoder.matches(currentPassword, userEntity.getPassword())) {
+      throw new InvalidCurrentPasswordException();
+    }
+
+    userEntity.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(userEntity);
   }
 }

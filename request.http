@@ -145,6 +145,16 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 DELETE {{baseUrl}}/users/3
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
+### USERS (USER/ADMIN) - CAMBIAR CONTRASEÑA
+PUT {{baseUrl}}/users/me/password
+Content-Type: application/json
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+{
+    "currentPassword": "Abcd1234",
+    "newPassword": "NuevaPass2026"
+}
+
 # =====================================================================
 #  CATEGORIES (lectura: cualquier usuario; escritura: ADMIN)
 # =====================================================================
