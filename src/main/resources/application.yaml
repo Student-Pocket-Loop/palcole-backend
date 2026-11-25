@@ -7,7 +7,7 @@ spring:
     # Al poner el valor entre ${key:value} priorizamos la variable de entorno de nombre key. Si no la encuentra, toma el valor value.
     url: jdbc:mysql://localhost:3306/palcole?createDatabaseIfNotExist=true
     username: root
-    password: root
+    password: Compresor98
 
   jpa:
     hibernate:
