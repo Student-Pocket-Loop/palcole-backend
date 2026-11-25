@@ -8,9 +8,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.vedruna.palcole.persistance.model.UserEntity;
 
 @Data
@@ -33,4 +39,11 @@ public class ConversationEntity {
 
   @Column(name = "started_at")
   LocalDateTime startedAt;
+
+  // La FK messages.conversation_id es ON DELETE CASCADE: lo hace la base de datos
+  @OneToMany(mappedBy = "conversation")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  List<MessageEntity> messages;
 }

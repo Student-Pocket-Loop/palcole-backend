@@ -27,6 +27,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.AcademicItemEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.ConversationEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.MessageEntity;
 import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.PromotionEntity;
 
 /** Entidad que representa un usuario y sus detalles de seguridad (implementa UserDetails). */
@@ -86,6 +87,12 @@ public class UserEntity implements UserDetails {
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
   List<ConversationEntity> conversations;
+
+  // 1:N sin cascade. La FK messages.sender_id no tiene ON DELETE (RESTRICT).
+  @OneToMany(mappedBy = "sender")
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  List<MessageEntity> messages;
 
   // N:M con los artículos. favorite_items es una tabla puente pura (solo user_id e item_id), por
   // eso se mapea con @ManyToMany y no necesita entity propia. UserEntity es el lado dueño.

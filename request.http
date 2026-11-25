@@ -328,4 +328,43 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 DELETE {{baseUrl}}/conversations/1
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
-swagger:http://localhost:8080/swagger-ui/index.html#/
+# =====================================================================
+#  MESSAGES (GET ALL: ADMIN)
+# =====================================================================
+
+### MESSAGES (GET ALL: ADMIN) - GET ALL
+GET {{baseUrl}}/messages/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### MESSAGES (GET ALL: ADMIN) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/messages/?page=0&size=5&sort=sentAt,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### MESSAGES (GET ALL: ADMIN) - GET BY ID
+GET {{baseUrl}}/messages/4
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### MESSAGES (GET ALL: ADMIN) - POST
+POST {{baseUrl}}/messages/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "conversationId": 1,
+    "senderId": 1,
+    "content": "Hola, ¿sigue disponible?"
+}
+
+### MESSAGES (GET ALL: ADMIN) - PUT
+PUT {{baseUrl}}/messages/4
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "content": "Hola, ¿sigue disponible el libro?"
+}
+
+### MESSAGES (GET ALL: ADMIN) - DELETE
+DELETE {{baseUrl}}/messages/4
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+

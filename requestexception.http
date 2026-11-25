@@ -130,6 +130,16 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "password": "Abcd1234"
 }
 
+### PUT de un mensaje que no existe
+### 404 - "MessageNotFoundException: Resource Not Found"
+PUT {{baseUrl}}/messages/9999
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "content": "Mensaje fantasma"
+}
+
 ### REGISTER con un email que ya existe (manuel@localhost.es)
 ### 409 - "DataIntegrityViolationException: Data Conflict"
 POST {{baseUrl}}/auth/register
@@ -293,6 +303,18 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "imageUrl": ""
 }
 
+### POST de un mensaje vacío
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.content
+POST {{baseUrl}}/messages/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "conversationId": 1,
+    "senderId": 1,
+    "content": "   "
+}
+
 # =====================================================================
 #  401 UNAUTHORIZED  ->  HandlerSecurityExController
 # =====================================================================
@@ -375,6 +397,12 @@ Authorization: Bearer {{loginUser.response.body.$.access_token}}
     "itemCondition": "NUEVO",
     "imageUrl": "https://ejemplo.com/libro.jpg"
 }
+
+### Un usuario con rol USER lista todos los mensajes (solo ADMIN)
+### 403 - "AccessDeniedException: Access Denied"
+GET {{baseUrl}}/messages/
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
 
 # =====================================================================
 #  405 METHOD NOT ALLOWED
