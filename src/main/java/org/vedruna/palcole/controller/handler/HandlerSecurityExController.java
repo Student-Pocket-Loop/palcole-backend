@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.vedruna.palcole.domain.exception.users.TooManyLoginAttemptsException;
 
 /**
  * Controlador de Asesoramiento REST (Security Exception Handler) para gestionar de forma
@@ -232,5 +233,20 @@ public class HandlerSecurityExController {
     problemDetail.setProperty("error", "Authentication failed");
     log.warn("General Authentication Exception (401 Unauthorized): {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problemDetail);
+  }
+
+  @ExceptionHandler(TooManyLoginAttemptsException.class)
+  protected ResponseEntity<Object> handleTooManyLoginAttempts(
+      TooManyLoginAttemptsException ex, WebRequest request) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(
+            HttpStatus.TOO_MANY_REQUESTS,
+            ex.getMessage() != null && !ex.getMessage().isBlank()
+                ? ex.getMessage()
+                : "Demasiados intentos fallidos. Tu cuenta ha sido bloqueada temporalmente.");
+    problemDetail.setTitle("TooManyLoginAttemptsException: Too Many Requests");
+    problemDetail.setProperty("error", "Account temporarily blocked");
+    log.warn("Too Many Login Attempts (429 Too Many Requests): {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(problemDetail);
   }
 }

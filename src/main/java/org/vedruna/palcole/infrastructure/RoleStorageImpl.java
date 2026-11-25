@@ -1,6 +1,9 @@
 package org.vedruna.palcole.infrastructure;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,9 @@ public class RoleStorageImpl implements RoleStorage {
   private final RoleOutConverter roleOutConverter;
 
   @Override
+  @Cacheable(
+      value = "rolesPage",
+      key = "#pageableModel.page + '-' + #pageableModel.size + '-' + #pageableModel.sort")
   public PageModel<Role> selectAllRoles(PageableModel pageableModel) {
     Pageable pageable = roleOutConverter.toPageable(pageableModel);
     Page<RoleEntity> studentsPage = roleRepository.findAll(pageable);
@@ -28,6 +34,7 @@ public class RoleStorageImpl implements RoleStorage {
   }
 
   @Override
+  @Cacheable(value = "roles", key = "#roleId")
   public Role findRoleById(Integer roleId) {
     RoleEntity roleEntity =
         roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
@@ -35,6 +42,11 @@ public class RoleStorageImpl implements RoleStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "roles", key = "#roleId"),
+        @CacheEvict(value = "rolesPage", allEntries = true)
+      })
   public Role updateRole(Integer roleId, Role newRole) {
     RoleEntity roleEntity =
         roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException(roleId));
@@ -45,11 +57,17 @@ public class RoleStorageImpl implements RoleStorage {
   }
 
   @Override
+  @CacheEvict(value = "rolesPage", allEntries = true)
   public Role insertRole(Role newRole) {
     return roleOutConverter.toDomain(roleRepository.save(roleOutConverter.toEntity(newRole)));
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "roles", key = "#roleId"),
+        @CacheEvict(value = "rolesPage", allEntries = true)
+      })
   public void deleteRole(Integer roleId) {
     if (!roleRepository.existsById(roleId)) {
       throw new RoleNotFoundException(roleId);

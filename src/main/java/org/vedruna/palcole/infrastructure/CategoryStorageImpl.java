@@ -1,6 +1,9 @@
 package org.vedruna.palcole.infrastructure;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,9 @@ public class CategoryStorageImpl implements CategoryStorage {
   private final CategoryOutConverter categoryOutConverter;
 
   @Override
+  @Cacheable(
+      value = "categoriesPage",
+      key = "#pageableModel.page + '-' + #pageableModel.size + '-' + #pageableModel.sort")
   public PageModel<Category> selectAllCategories(PageableModel pageableModel) {
     Pageable pageable = categoryOutConverter.toPageable(pageableModel);
     Page<CategoryEntity> categoryPage = categoryRepository.findAll(pageable);
@@ -28,6 +34,7 @@ public class CategoryStorageImpl implements CategoryStorage {
   }
 
   @Override
+  @Cacheable(value = "categories", key = "#categoryId")
   public Category findCategoryById(Integer categoryId) {
     CategoryEntity categoryEntity =
         categoryRepository
@@ -37,6 +44,11 @@ public class CategoryStorageImpl implements CategoryStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "categories", key = "#categoryId"),
+        @CacheEvict(value = "categoriesPage", allEntries = true)
+      })
   public Category updateCategory(Integer categoryId, Category newCategory) {
     CategoryEntity categoryEntity =
         categoryRepository
@@ -49,12 +61,18 @@ public class CategoryStorageImpl implements CategoryStorage {
   }
 
   @Override
+  @CacheEvict(value = "categoriesPage", allEntries = true)
   public Category insertCategory(Category newCategory) {
     return categoryOutConverter.toDomain(
         categoryRepository.save(categoryOutConverter.toEntity(newCategory)));
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "categories", key = "#categoryId"),
+        @CacheEvict(value = "categoriesPage", allEntries = true)
+      })
   public void deleteCategory(Integer categoryId) {
     if (!categoryRepository.existsById(categoryId)) {
       throw new CategoryNotFoundException(categoryId);

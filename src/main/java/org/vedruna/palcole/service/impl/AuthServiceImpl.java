@@ -6,16 +6,19 @@ import java.util.NoSuchElementException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.vedruna.palcole.controller.dto.authdto.AuthResponseDto;
+import org.vedruna.palcole.domain.exception.users.TooManyLoginAttemptsException;
 import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
 import org.vedruna.palcole.persistance.repository.RoleRepository;
 import org.vedruna.palcole.persistance.repository.UserRepository;
 import org.vedruna.palcole.service.AuthService;
+import org.vedruna.palcole.service.LoginAttemptService;
 
 /**
  * Servicio encargado de gestionar las operaciones de autenticación (login) y registro de usuarios.
@@ -45,6 +48,9 @@ public class AuthServiceImpl implements AuthService {
   /** Servicio para obtener detalles de usuario. */
   private final UserDetailsService userDetailsService;
 
+  /** Servicio para controlar intentos fallidos de login y bloqueo temporal. */
+  private final LoginAttemptService loginAttemptService;
+
   /**
    * Procesa la solicitud de inicio de sesión de un usuario.
    *
@@ -58,9 +64,22 @@ public class AuthServiceImpl implements AuthService {
    *     datos (situación inusual).
    */
   public AuthResponseDto login(UserEntity user) {
+    String key = user.getUsername();
+    if (loginAttemptService.isBlocked(key)) {
+      throw new TooManyLoginAttemptsException(
+          "Demasiados intentos fallidos de inicio de sesión. Cuenta bloqueada temporalmente.");
+    }
+
     // 1. Intenta autenticar al usuario usando el AuthenticationManager
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+    } catch (AuthenticationException ex) {
+      loginAttemptService.loginFailed(key);
+      throw ex;
+    }
+
+    loginAttemptService.loginSucceeded(key);
 
     // TODO: Excepcion personalizada
     // 2. Si la autenticación es exitosa, busca el usuario completo en la DB

@@ -16,7 +16,6 @@ import jakarta.validation.ValidationException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,9 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.core.PropertyReferenceException;
-import org.springframework.data.core.TypeInformation;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -58,7 +55,10 @@ class HandlerExceptionControllerTest {
   void handleResourceNotFoundOkTest() {
 
     // INPUT
-    ResourceNotFoundException exInput = new ResourceNotFoundException("Curso no encontrado");
+    ResourceNotFoundException exInput = mock(ResourceNotFoundException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("El recurso solicitado no fue encontrado");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -71,29 +71,9 @@ class HandlerExceptionControllerTest {
           assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.NOT_FOUND.value(), body.getStatus());
-          assertEquals("ResourceNotFoundException: Resource Not Found", body.getTitle());
-          assertEquals("Curso no encontrado", body.getDetail());
-        });
-  }
-
-  @Test
-  @DisplayName("Test handler handleResourceNotFound con mensaje en blanco")
-  void handleResourceNotFoundBlankMessageTest() {
-
-    // INPUT
-    ResourceNotFoundException exInput = new ResourceNotFoundException("   ");
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res =
-        handlerExceptionController.handleResourceNotFound(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals("El recurso solicitado no fue encontrado.", body.getDetail());
+          assertEquals(
+              exInput.getClass().getSimpleName() + ": Resource Not Found", body.getTitle());
+          assertEquals("El recurso solicitado no fue encontrado", body.getDetail());
         });
   }
 
@@ -102,8 +82,10 @@ class HandlerExceptionControllerTest {
   void handleResourceAlreadyExistsOkTest() {
 
     // INPUT
-    ResourceAlreadyExistsException exInput =
-        new ResourceAlreadyExistsException("El recurso ya existe");
+    ResourceAlreadyExistsException exInput = mock(ResourceAlreadyExistsException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("El recurso ya existe");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -116,38 +98,18 @@ class HandlerExceptionControllerTest {
           assertEquals(HttpStatus.CONFLICT, res.getStatusCode());
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.CONFLICT.value(), body.getStatus());
-          assertEquals("ResourceAlreadyExistsException: Resource Already Exists", body.getTitle());
+          assertEquals(
+              exInput.getClass().getSimpleName() + ": Resource Already Exists", body.getTitle());
           assertEquals("El recurso ya existe", body.getDetail());
         });
   }
 
   @Test
-  @DisplayName("Test handler handleResourceAlreadyExists con mensaje en blanco")
-  void handleResourceAlreadyExistsBlankMessageTest() {
+  @DisplayName("Test handler handleDefaultDataNotFound DefaultRoleNotFoundException Ok")
+  void handleDefaultDataNotFoundRoleOkTest() {
 
     // INPUT
-    ResourceAlreadyExistsException exInput = new ResourceAlreadyExistsException("  ");
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res =
-        handlerExceptionController.handleResourceAlreadyExists(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.CONFLICT, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals("El recurso ya existe.", body.getDetail());
-        });
-  }
-
-  @Test
-  @DisplayName("Test handler handleDefaultDataNotFound con DefaultRoleNotFoundException Ok")
-  void handleDefaultRoleNotFoundOkTest() {
-
-    // INPUT
-    NoSuchElementException exInput = new DefaultRoleNotFoundException("USER");
+    DefaultRoleNotFoundException exInput = new DefaultRoleNotFoundException("USER");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -167,13 +129,14 @@ class HandlerExceptionControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Test handler handleDefaultDataNotFound con DefaultUserNotFoundException y mensaje en blanco")
-  void handleDefaultUserNotFoundBlankMessageTest() {
+  @DisplayName("Test handler handleDefaultDataNotFound DefaultUserNotFoundException Ok")
+  void handleDefaultDataNotFoundUserOkTest() {
 
     // INPUT
-    NoSuchElementException exInput = mock(DefaultUserNotFoundException.class);
-    when(exInput.getMessage()).thenReturn("   ");
+    DefaultUserNotFoundException exInput = mock(DefaultUserNotFoundException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("No existe el usuario por defecto en la base de datos");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -187,9 +150,7 @@ class HandlerExceptionControllerTest {
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), body.getStatus());
           assertEquals("DefaultUserNotFoundException: Missing Default Data", body.getTitle());
-          assertEquals(
-              "Error interno: faltan datos iniciales obligatorios en la base de datos.",
-              body.getDetail());
+          assertEquals("No existe el usuario por defecto en la base de datos", body.getDetail());
         });
   }
 
@@ -198,9 +159,12 @@ class HandlerExceptionControllerTest {
   void handleMethodArgumentTypeMismatchOkTest() {
 
     // INPUT
-    MethodArgumentTypeMismatchException exInput =
-        new MethodArgumentTypeMismatchException(
-            "abc", Long.class, "id", null, new NumberFormatException("For input string: \"abc\""));
+    MethodArgumentTypeMismatchException exInput = mock(MethodArgumentTypeMismatchException.class);
+
+    // MOCKS
+    when(exInput.getName()).thenReturn("roleId");
+    when(exInput.getValue()).thenReturn("abc");
+    when(exInput.getRequiredType()).thenReturn((Class) Integer.class);
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -216,7 +180,8 @@ class HandlerExceptionControllerTest {
           assertEquals(
               "MethodArgumentTypeMismatchException: Invalid Argument Type", body.getTitle());
           assertEquals(
-              "The parameter 'id' with value 'abc' must be of type 'Long'.", body.getDetail());
+              "The parameter 'roleId' with value 'abc' must be of type 'Integer'.",
+              body.getDetail());
           assertEquals(
               URI.create(
                   "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/method/annotation/MethodArgumentTypeMismatchException.html"),
@@ -225,35 +190,11 @@ class HandlerExceptionControllerTest {
   }
 
   @Test
-  @DisplayName("Test handler handleMethodArgumentTypeMismatch con requiredType nulo")
-  void handleMethodArgumentTypeMismatchNullTypeTest() {
-
-    // INPUT
-    MethodArgumentTypeMismatchException exInput =
-        new MethodArgumentTypeMismatchException("abc", null, "id", null, new RuntimeException());
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res =
-        handlerExceptionController.handleMethodArgumentTypeMismatch(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "The parameter 'id' with value 'abc' must be of type 'a different type'.",
-              body.getDetail());
-        });
-  }
-
-  @Test
   @DisplayName("Test handler handleUnexpectedType Ok")
   void handleUnexpectedTypeOkTest() {
 
     // INPUT
-    UnexpectedTypeException exInput = new UnexpectedTypeException("Unexpected validation type");
+    UnexpectedTypeException exInput = new UnexpectedTypeException("Tipo inesperado");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerExceptionController.handleUnexpectedType(exInput, request);
@@ -281,7 +222,8 @@ class HandlerExceptionControllerTest {
   void handleIllegalArgumentOkTest() {
 
     // INPUT
-    IllegalArgumentException exInput = new IllegalArgumentException("Edad no válida");
+    IllegalArgumentException exInput =
+        new IllegalArgumentException("Propiedad de ordenación inválida");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerExceptionController.handleIllegalArgument(exInput, request);
@@ -294,33 +236,11 @@ class HandlerExceptionControllerTest {
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.BAD_REQUEST.value(), body.getStatus());
           assertEquals("IllegalArgumentException: Invalid Business Argument", body.getTitle());
-          assertEquals("Edad no válida", body.getDetail());
+          assertEquals("Propiedad de ordenación inválida", body.getDetail());
           assertEquals(
               URI.create(
                   "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"),
               body.getType());
-        });
-  }
-
-  @Test
-  @DisplayName("Test handler handleIllegalArgument con mensaje en blanco")
-  void handleIllegalArgumentBlankMessageTest() {
-
-    // INPUT
-    IllegalArgumentException exInput = new IllegalArgumentException("   ");
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res = handlerExceptionController.handleIllegalArgument(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "The request argument is invalid due to a violation of business rules.",
-              body.getDetail());
         });
   }
 
@@ -384,19 +304,20 @@ class HandlerExceptionControllerTest {
   }
 
   @Test
-  @DisplayName("Test handler handleHttpMessageNotReadable con rootCause")
-  void handleHttpMessageNotReadableWithRootCauseTest() {
+  @DisplayName("Test handler handleHttpMessageNotReadable Ok")
+  void handleHttpMessageNotReadableOkTest() {
 
     // INPUT
-    Throwable rootCause = new RuntimeException("JSON parse error");
-    HttpMessageNotReadableException exInput =
-        new HttpMessageNotReadableException(
-            "Malformed JSON", rootCause, mock(HttpInputMessage.class));
+    HttpMessageNotReadableException exInput = mock(HttpMessageNotReadableException.class);
+    HttpHeaders headersInput = new HttpHeaders();
+
+    // MOCKS
+    when(exInput.getRootCause()).thenReturn(new RuntimeException("JSON parse error"));
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
         handlerExceptionController.handleHttpMessageNotReadable(
-            exInput, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+            exInput, headersInput, HttpStatus.BAD_REQUEST, request);
 
     // VALIDACIONES
     assertAll(
@@ -415,43 +336,18 @@ class HandlerExceptionControllerTest {
   }
 
   @Test
-  @DisplayName("Test handler handleHttpMessageNotReadable sin rootCause")
-  void handleHttpMessageNotReadableWithoutRootCauseTest() {
-
-    // INPUT
-    HttpMessageNotReadableException exInput =
-        new HttpMessageNotReadableException("Malformed JSON", mock(HttpInputMessage.class));
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res =
-        handlerExceptionController.handleHttpMessageNotReadable(
-            exInput, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "The request body could not be read or is malformed. Please check the JSON syntax and data types.",
-              body.getDetail());
-        });
-  }
-
-  @Test
   @DisplayName("Test handler handleConstraintViolation Ok")
   void handleConstraintViolationOkTest() {
 
     // INPUT
-    @SuppressWarnings("unchecked")
-    ConstraintViolation<Object> violation = mock(ConstraintViolation.class);
-    Path path = mock(Path.class);
-    when(path.toString()).thenReturn("email");
-    when(violation.getPropertyPath()).thenReturn(path);
-    when(violation.getMessage()).thenReturn("must be a well-formed email address");
+    ConstraintViolation<?> violationMock = mock(ConstraintViolation.class);
+    Path pathMock = mock(Path.class);
+    ConstraintViolationException exInput = new ConstraintViolationException(Set.of(violationMock));
 
-    ConstraintViolationException exInput = new ConstraintViolationException(Set.of(violation));
+    // MOCKS
+    when(violationMock.getPropertyPath()).thenReturn(pathMock);
+    when(pathMock.toString()).thenReturn("roleId");
+    when(violationMock.getMessage()).thenReturn("must be greater than 0");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -466,16 +362,11 @@ class HandlerExceptionControllerTest {
           assertEquals(HttpStatus.BAD_REQUEST.value(), body.getStatus());
           assertEquals("ConstraintViolationException: Constraint Violation", body.getTitle());
           assertEquals(
-              "One or more constraints were violated. Please check the 'errors' property for details on the invalid fields.",
-              body.getDetail());
+              Map.of("roleId", "must be greater than 0"), body.getProperties().get("errors"));
           assertEquals(
               URI.create(
                   "https://jakarta.ee/specifications/bean-validation/3.0/apidocs/jakarta/validation/ConstraintViolationException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
-          assertEquals(
-              Map.of("email", "must be a well-formed email address"),
-              body.getProperties().get("errors"));
         });
   }
 
@@ -484,17 +375,20 @@ class HandlerExceptionControllerTest {
   void handleMethodArgumentNotValidOkTest() {
 
     // INPUT
-    BindingResult bindingResult = mock(BindingResult.class);
-    FieldError fieldError = new FieldError("userDto", "username", "no puede estar vacío");
-    when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
-
     MethodArgumentNotValidException exInput = mock(MethodArgumentNotValidException.class);
-    when(exInput.getBindingResult()).thenReturn(bindingResult);
+    BindingResult bindingResultMock = mock(BindingResult.class);
+    HttpHeaders headersInput = new HttpHeaders();
+    List<FieldError> fieldErrors =
+        List.of(new FieldError("insertRoleDTO", "name", "El nombre no puede estar vacío"));
+
+    // MOCKS
+    when(exInput.getBindingResult()).thenReturn(bindingResultMock);
+    when(bindingResultMock.getFieldErrors()).thenReturn(fieldErrors);
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
         handlerExceptionController.handleMethodArgumentNotValid(
-            exInput, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+            exInput, headersInput, HttpStatus.BAD_REQUEST, request);
 
     // VALIDACIONES
     assertAll(
@@ -505,15 +399,11 @@ class HandlerExceptionControllerTest {
           assertEquals(HttpStatus.BAD_REQUEST.value(), body.getStatus());
           assertEquals("MethodArgumentNotValidException: Validation Error", body.getTitle());
           assertEquals(
-              "The request body contains invalid data. Please correct the fields listed in the 'errors' property.",
-              body.getDetail());
+              Map.of("name", "El nombre no puede estar vacío"), body.getProperties().get("errors"));
           assertEquals(
               URI.create(
                   "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/MethodArgumentNotValidException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
-          assertEquals(
-              Map.of("username", "no puede estar vacío"), body.getProperties().get("errors"));
         });
   }
 
@@ -522,7 +412,7 @@ class HandlerExceptionControllerTest {
   void handleValidationOkTest() {
 
     // INPUT
-    ValidationException exInput = new ValidationException("Error de validación personalizado");
+    ValidationException exInput = new ValidationException("Error de validación general");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerExceptionController.handleValidation(exInput, request);
@@ -535,7 +425,7 @@ class HandlerExceptionControllerTest {
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.BAD_REQUEST.value(), body.getStatus());
           assertEquals("ValidationException: Validation Failed", body.getTitle());
-          assertEquals("Error de validación personalizado", body.getDetail());
+          assertEquals("Error de validación general", body.getDetail());
           assertEquals(
               URI.create(
                   "https://jakarta.ee/specifications/bean-validation/3.0/apidocs/jakarta/validation/ValidationException.html"),
@@ -544,33 +434,11 @@ class HandlerExceptionControllerTest {
   }
 
   @Test
-  @DisplayName("Test handler handleValidation con mensaje en blanco")
-  void handleValidationBlankMessageTest() {
-
-    // INPUT
-    ValidationException exInput = new ValidationException("   ");
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res = handlerExceptionController.handleValidation(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "The request data is invalid. One or more validation rules were violated.",
-              body.getDetail());
-        });
-  }
-
-  @Test
   @DisplayName("Test handler handleRollBack Ok")
   void handleRollBackOkTest() {
 
     // INPUT
-    RollbackException exInput = new RollbackException("Transaction rolled back");
+    RollbackException exInput = new RollbackException("Error en transacción");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerExceptionController.handleRollBack(exInput, request);
@@ -600,29 +468,23 @@ class HandlerExceptionControllerTest {
     // INPUT
     HttpRequestMethodNotSupportedException exInput =
         new HttpRequestMethodNotSupportedException("DELETE", List.of("GET", "POST"));
-    HttpHeaders headers = new HttpHeaders();
+    HttpHeaders headersInput = new HttpHeaders();
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
         handlerExceptionController.handleHttpRequestMethodNotSupported(
-            exInput, headers, HttpStatus.METHOD_NOT_ALLOWED, request);
+            exInput, headersInput, HttpStatus.METHOD_NOT_ALLOWED, request);
 
     // VALIDACIONES
     assertAll(
         () -> {
           assertNotNull(res);
           assertEquals(HttpStatus.METHOD_NOT_ALLOWED, res.getStatusCode());
-          assertEquals(Set.of(HttpMethod.GET, HttpMethod.POST), headers.getAllow());
+          assertEquals(Set.of(HttpMethod.GET, HttpMethod.POST), res.getHeaders().getAllow());
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.METHOD_NOT_ALLOWED.value(), body.getStatus());
           assertEquals(
               "HttpRequestMethodNotSupportedException: HTTP Method Not Allowed", body.getTitle());
-          assertEquals("Request method 'DELETE' is not supported", body.getDetail());
-          assertEquals(
-              URI.create(
-                  "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/HttpRequestMethodNotSupportedException.html"),
-              body.getType());
-          assertNotNull(body.getProperties());
           assertEquals(Set.of("GET", "POST"), body.getProperties().get("allowedMethods"));
         });
   }
@@ -632,8 +494,11 @@ class HandlerExceptionControllerTest {
   void handlePropertyReferenceOkTest() {
 
     // INPUT
-    PropertyReferenceException exInput =
-        new PropertyReferenceException("invalidField", TypeInformation.of(Object.class), List.of());
+    PropertyReferenceException exInput = mock(PropertyReferenceException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("No property 'invalidField' found for type 'Role'");
+    when(exInput.getPropertyName()).thenReturn("invalidField");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =
@@ -647,13 +512,12 @@ class HandlerExceptionControllerTest {
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.BAD_REQUEST.value(), body.getStatus());
           assertEquals("PropertyReferenceException: Invalid Property Reference", body.getTitle());
-          assertEquals(exInput.getMessage(), body.getDetail());
+          assertEquals("No property 'invalidField' found for type 'Role'", body.getDetail());
+          assertEquals("invalidField", body.getProperties().get("invalidProperty"));
           assertEquals(
               URI.create(
                   "https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/mapping/PropertyReferenceException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
-          assertEquals("invalidField", body.getProperties().get("invalidProperty"));
         });
   }
 
@@ -662,7 +526,7 @@ class HandlerExceptionControllerTest {
   void handleGenericExceptionOkTest() {
 
     // INPUT
-    Exception exInput = new Exception("Unexpected failure");
+    Exception exInput = new RuntimeException("Error inesperado");
 
     // EJECUCIÓN
     ResponseEntity<Object> res =

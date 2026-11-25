@@ -1,6 +1,9 @@
 package org.vedruna.palcole.infrastructure;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -29,6 +32,9 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
   private final CategoryRepository categoryRepository;
 
   @Override
+  @Cacheable(
+      value = "academicItemsPage",
+      key = "#pageableModel.page + '-' + #pageableModel.size + '-' + #pageableModel.sort")
   public PageModel<AcademicItem> selectAllAcademicItems(PageableModel pageableModel) {
     Pageable pageable = academicItemOutConverter.toPageable(pageableModel);
     Page<AcademicItemEntity> academicItemPage = academicItemRepository.findAll(pageable);
@@ -36,6 +42,7 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
   }
 
   @Override
+  @Cacheable(value = "academicItems", key = "#itemId")
   public AcademicItem findAcademicItemById(Integer itemId) {
     AcademicItemEntity academicItemEntity =
         academicItemRepository
@@ -45,6 +52,11 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "academicItems", key = "#itemId"),
+        @CacheEvict(value = "academicItemsPage", allEntries = true)
+      })
   public AcademicItem updateAcademicItem(Integer itemId, AcademicItem newAcademicItem) {
     AcademicItemEntity academicItemEntity =
         academicItemRepository
@@ -72,6 +84,7 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
   }
 
   @Override
+  @CacheEvict(value = "academicItemsPage", allEntries = true)
   public AcademicItem insertAcademicItem(AcademicItem newAcademicItem) {
     AcademicItemEntity academicItemEntity = academicItemOutConverter.toEntity(newAcademicItem);
     academicItemEntity.setStudent(findUser(newAcademicItem.getStudentId()));
@@ -80,6 +93,11 @@ public class AcademicItemStorageImpl implements AcademicItemStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "academicItems", key = "#itemId"),
+        @CacheEvict(value = "academicItemsPage", allEntries = true)
+      })
   public void deleteAcademicItem(Integer itemId) {
     if (!academicItemRepository.existsById(itemId)) {
       throw new AcademicItemNotFoundException(itemId);

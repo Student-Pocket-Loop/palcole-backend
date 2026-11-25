@@ -1,6 +1,9 @@
 package org.vedruna.palcole.infrastructure;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,9 @@ public class PromotionStorageImpl implements PromotionStorage {
   private final CategoryRepository categoryRepository;
 
   @Override
+  @Cacheable(
+      value = "promotionsPage",
+      key = "#pageableModel.page + '-' + #pageableModel.size + '-' + #pageableModel.sort")
   public PageModel<Promotion> selectAllPromotions(PageableModel pageableModel) {
     Pageable pageable = promotionOutConverter.toPageable(pageableModel);
     Page<PromotionEntity> promotionPage = promotionRepository.findAll(pageable);
@@ -32,6 +38,7 @@ public class PromotionStorageImpl implements PromotionStorage {
   }
 
   @Override
+  @Cacheable(value = "promotions", key = "#promotionId")
   public Promotion findPromotionById(Integer promotionId) {
     PromotionEntity promotionEntity =
         promotionRepository
@@ -41,6 +48,11 @@ public class PromotionStorageImpl implements PromotionStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "promotions", key = "#promotionId"),
+        @CacheEvict(value = "promotionsPage", allEntries = true)
+      })
   public Promotion updatePromotion(Integer promotionId, Promotion newPromotion) {
     PromotionEntity promotionEntity =
         promotionRepository
@@ -63,6 +75,7 @@ public class PromotionStorageImpl implements PromotionStorage {
   }
 
   @Override
+  @CacheEvict(value = "promotionsPage", allEntries = true)
   public Promotion insertPromotion(Promotion newPromotion) {
     PromotionEntity promotionEntity = promotionOutConverter.toEntity(newPromotion);
     promotionEntity.setCategory(findCategory(newPromotion.getCategoryId()));
@@ -70,6 +83,11 @@ public class PromotionStorageImpl implements PromotionStorage {
   }
 
   @Override
+  @Caching(
+      evict = {
+        @CacheEvict(value = "promotions", key = "#promotionId"),
+        @CacheEvict(value = "promotionsPage", allEntries = true)
+      })
   public void deletePromotion(Integer promotionId) {
     if (!promotionRepository.existsById(promotionId)) {
       throw new PromotionNotFoundException(promotionId);

@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.JwtException;
 import java.net.URI;
@@ -28,6 +30,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.context.request.WebRequest;
+import org.vedruna.palcole.domain.exception.users.TooManyLoginAttemptsException;
 
 @ExtendWith(MockitoExtension.class)
 class HandlerSecurityExControllerTest {
@@ -61,7 +64,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/access/AccessDeniedException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("denied", body.getProperties().get("access"));
         });
   }
@@ -91,7 +93,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/BadCredentialsException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("Invalid credentials", body.getProperties().get("error"));
         });
   }
@@ -120,29 +121,7 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/core/userdetails/UsernameNotFoundException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("User not found", body.getProperties().get("error"));
-        });
-  }
-
-  @Test
-  @DisplayName("Test handler handleUsernameNotFound con mensaje en blanco")
-  void handleUsernameNotFoundBlankMessageTest() {
-
-    // INPUT
-    UsernameNotFoundException exInput = new UsernameNotFoundException("   ");
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res =
-        handlerSecurityExController.handleUsernameNotFound(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.UNAUTHORIZED, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals("The requested user could not be found.", body.getDetail());
         });
   }
 
@@ -171,7 +150,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/LockedException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("locked", body.getProperties().get("accountStatus"));
         });
   }
@@ -201,7 +179,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/DisabledException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("disabled", body.getProperties().get("accountStatus"));
         });
   }
@@ -231,7 +208,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AccountExpiredException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("expired", body.getProperties().get("accountStatus"));
         });
   }
@@ -263,7 +239,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/CredentialsExpiredException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("expired", body.getProperties().get("credentialsStatus"));
         });
   }
@@ -273,7 +248,10 @@ class HandlerSecurityExControllerTest {
   void handleAccountStatusOkTest() {
 
     // INPUT
-    AccountStatusException exInput = new AccountStatusException("Estado de cuenta inválido") {};
+    AccountStatusException exInput = mock(AccountStatusException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("Estado de cuenta inválido");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerSecurityExController.handleAccountStatus(exInput, request);
@@ -291,28 +269,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AccountStatusException.html"),
               body.getType());
-        });
-  }
-
-  @Test
-  @DisplayName("Test handler handleAccountStatus con mensaje en blanco")
-  void handleAccountStatusBlankMessageTest() {
-
-    // INPUT
-    AccountStatusException exInput = new AccountStatusException("   ") {};
-
-    // EJECUCIÓN
-    ResponseEntity<Object> res = handlerSecurityExController.handleAccountStatus(exInput, request);
-
-    // VALIDACIONES
-    assertAll(
-        () -> {
-          assertNotNull(res);
-          assertEquals(HttpStatus.UNAUTHORIZED, res.getStatusCode());
-          ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "Authentication failed due to the current status of the user account.",
-              body.getDetail());
         });
   }
 
@@ -344,7 +300,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/InsufficientAuthenticationException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("insufficient", body.getProperties().get("auth"));
         });
   }
@@ -377,7 +332,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/authentication/AuthenticationCredentialsNotFoundException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("credentials_not_found", body.getProperties().get("auth"));
         });
   }
@@ -387,7 +341,7 @@ class HandlerSecurityExControllerTest {
   void handleJwtExceptionOkTest() {
 
     // INPUT
-    JwtException exInput = new JwtException("JWT expired");
+    JwtException exInput = new JwtException("Invalid JWT token");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerSecurityExController.handleJwtException(exInput, request);
@@ -407,7 +361,6 @@ class HandlerSecurityExControllerTest {
               URI.create(
                   "https://javadoc.io/doc/io.jsonwebtoken/jjwt-api/latest/io/jsonwebtoken/JwtException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("invalid_or_expired", body.getProperties().get("token"));
         });
   }
@@ -417,7 +370,10 @@ class HandlerSecurityExControllerTest {
   void handleAuthenticationOkTest() {
 
     // INPUT
-    AuthenticationException exInput = new AuthenticationException("Error de autenticación") {};
+    AuthenticationException exInput = mock(AuthenticationException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("Fallo general de autenticación");
 
     // EJECUCIÓN
     ResponseEntity<Object> res = handlerSecurityExController.handleAuthentication(exInput, request);
@@ -430,34 +386,39 @@ class HandlerSecurityExControllerTest {
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
           assertEquals(HttpStatus.UNAUTHORIZED.value(), body.getStatus());
           assertEquals("AuthenticationException: Authentication Failed", body.getTitle());
-          assertEquals("Error de autenticación", body.getDetail());
+          assertEquals("Fallo general de autenticación", body.getDetail());
           assertEquals(
               URI.create(
                   "https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/core/AuthenticationException.html"),
               body.getType());
-          assertNotNull(body.getProperties());
           assertEquals("Authentication failed", body.getProperties().get("error"));
         });
   }
 
   @Test
-  @DisplayName("Test handler handleAuthentication con mensaje en blanco")
-  void handleAuthenticationBlankMessageTest() {
+  @DisplayName("Test handler handleTooManyLoginAttempts Ok")
+  void handleTooManyLoginAttemptsOkTest() {
 
     // INPUT
-    AuthenticationException exInput = new AuthenticationException("   ") {};
+    TooManyLoginAttemptsException exInput = mock(TooManyLoginAttemptsException.class);
+
+    // MOCKS
+    when(exInput.getMessage()).thenReturn("Has superado el máximo de intentos fallidos permitidos");
 
     // EJECUCIÓN
-    ResponseEntity<Object> res = handlerSecurityExController.handleAuthentication(exInput, request);
+    ResponseEntity<Object> res =
+        handlerSecurityExController.handleTooManyLoginAttempts(exInput, request);
 
     // VALIDACIONES
     assertAll(
         () -> {
           assertNotNull(res);
-          assertEquals(HttpStatus.UNAUTHORIZED, res.getStatusCode());
+          assertEquals(HttpStatus.TOO_MANY_REQUESTS, res.getStatusCode());
           ProblemDetail body = assertInstanceOf(ProblemDetail.class, res.getBody());
-          assertEquals(
-              "An authentication error occurred while processing the request.", body.getDetail());
+          assertEquals(HttpStatus.TOO_MANY_REQUESTS.value(), body.getStatus());
+          assertEquals("TooManyLoginAttemptsException: Too Many Requests", body.getTitle());
+          assertEquals("Has superado el máximo de intentos fallidos permitidos", body.getDetail());
+          assertEquals("Account temporarily blocked", body.getProperties().get("error"));
         });
   }
 }

@@ -22,10 +22,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vedruna.palcole.controller.dto.authdto.AuthResponseDto;
+import org.vedruna.palcole.domain.exception.users.TooManyLoginAttemptsException;
 import org.vedruna.palcole.persistance.model.RoleEntity;
 import org.vedruna.palcole.persistance.model.UserEntity;
 import org.vedruna.palcole.persistance.repository.RoleRepository;
 import org.vedruna.palcole.persistance.repository.UserRepository;
+import org.vedruna.palcole.service.LoginAttemptService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
@@ -41,6 +43,8 @@ class AuthServiceImplTest {
   @Mock private AuthenticationManager authenticationManager;
 
   @Mock private UserDetailsService userDetailsService;
+
+  @Mock private LoginAttemptService loginAttemptService;
 
   @InjectMocks private AuthServiceImpl authService;
 
@@ -85,6 +89,33 @@ class AuthServiceImplTest {
     assertEquals("User not found", ex.getMessage());
     verify(authenticationManager)
         .authenticate(new UsernamePasswordAuthenticationToken("nonexistent", "password"));
+  }
+
+  @Test
+  void testLogin_blocked() {
+    UserEntity inputUser = new UserEntity();
+    inputUser.setUsername("blockedUser");
+    inputUser.setPassword("password");
+
+    when(loginAttemptService.isBlocked("blockedUser")).thenReturn(true);
+
+    assertThrows(TooManyLoginAttemptsException.class, () -> authService.login(inputUser));
+  }
+
+  @Test
+  void testLogin_badCredentialsRecordsFailure() {
+    UserEntity inputUser = new UserEntity();
+    inputUser.setUsername("testuser");
+    inputUser.setPassword("wrong");
+
+    when(loginAttemptService.isBlocked("testuser")).thenReturn(false);
+    when(authenticationManager.authenticate(any()))
+        .thenThrow(new org.springframework.security.authentication.BadCredentialsException("Bad"));
+
+    assertThrows(
+        org.springframework.security.authentication.BadCredentialsException.class,
+        () -> authService.login(inputUser));
+    verify(loginAttemptService).loginFailed("testuser");
   }
 
   @Test
