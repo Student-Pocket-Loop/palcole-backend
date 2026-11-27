@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.vedruna.palcole.application.User.ChangePasswordUseCaseImpl;
 import org.vedruna.palcole.application.User.DeleteUserUseCaseImpl;
 import org.vedruna.palcole.application.User.NewUserUseCaseImpl;
 import org.vedruna.palcole.application.User.SelectAllUsersUseCaseImpl;
@@ -35,6 +36,10 @@ import org.vedruna.palcole.application.favoritePromotions.DeleteFavoritePromotio
 import org.vedruna.palcole.application.favoritePromotions.NewFavoritePromotionUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.SelectAllFavoritePromotionsUseCaseImpl;
 import org.vedruna.palcole.application.favoritePromotions.SelectFavoritePromotionByIdUseCaseImpl;
+import org.vedruna.palcole.application.favouriteitems.DeleteFavoriteItemUseCaseImpl;
+import org.vedruna.palcole.application.favouriteitems.NewFavoriteItemUseCaseImpl;
+import org.vedruna.palcole.application.favouriteitems.SelectAllFavoriteItemsUseCaseImpl;
+import org.vedruna.palcole.application.favouriteitems.SelectFavoriteItemByIdUseCaseImpl;
 import org.vedruna.palcole.application.messages.DeleteMessageUseCaseImpl;
 import org.vedruna.palcole.application.messages.NewMessageUseCaseImpl;
 import org.vedruna.palcole.application.messages.SelectAllMessagesUseCaseImpl;
@@ -68,6 +73,10 @@ import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.DeleteFavorit
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.NewFavoritePromotionUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.SelectAllFavoritePromotionsUseCase;
 import org.vedruna.palcole.domain.ports.inbound.favoritePromotions.SelectFavoritePromotionByIdUseCase;
+import org.vedruna.palcole.domain.ports.inbound.favouriteitems.DeleteFavoriteItemUseCase;
+import org.vedruna.palcole.domain.ports.inbound.favouriteitems.NewFavoriteItemUseCase;
+import org.vedruna.palcole.domain.ports.inbound.favouriteitems.SelectAllFavoriteItemsUseCase;
+import org.vedruna.palcole.domain.ports.inbound.favouriteitems.SelectFavoriteItemByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.messages.DeleteMessageUseCase;
 import org.vedruna.palcole.domain.ports.inbound.messages.NewMessageUseCase;
 import org.vedruna.palcole.domain.ports.inbound.messages.SelectAllMessagesUseCase;
@@ -83,6 +92,7 @@ import org.vedruna.palcole.domain.ports.inbound.role.NewRoleUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.SelectAllRolesUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.SelectRoleByIdUseCase;
 import org.vedruna.palcole.domain.ports.inbound.role.UpdateRoleUseCase;
+import org.vedruna.palcole.domain.ports.inbound.user.ChangePasswordUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.DeleteUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.NewUserUseCase;
 import org.vedruna.palcole.domain.ports.inbound.user.SelectAllUsersUseCase;
@@ -91,6 +101,7 @@ import org.vedruna.palcole.domain.ports.inbound.user.UpdateUserUseCase;
 import org.vedruna.palcole.domain.ports.outbound.AcademicItemStorage;
 import org.vedruna.palcole.domain.ports.outbound.CategoryStorage;
 import org.vedruna.palcole.domain.ports.outbound.ConversationStorage;
+import org.vedruna.palcole.domain.ports.outbound.FavoriteItemStorage;
 import org.vedruna.palcole.domain.ports.outbound.FavoritePromotionStorage;
 import org.vedruna.palcole.domain.ports.outbound.MessageStorage;
 import org.vedruna.palcole.domain.ports.outbound.PromotionStorage;
@@ -231,6 +242,11 @@ public class ApplicationConfig {
   @Bean
   UpdateUserUseCase getUpdateUserUseCase(UserStorage userStorage) {
     return new UpdateUserUseCaseImpl(userStorage);
+  }
+
+  @Bean
+  ChangePasswordUseCase getChangePasswordUseCase(UserStorage userStorage) {
+    return new ChangePasswordUseCaseImpl(userStorage);
   }
 
   @Bean
@@ -379,5 +395,27 @@ public class ApplicationConfig {
   @Bean
   DeleteMessageUseCase getDeleteMessageUseCase(MessageStorage messageStorage) {
     return new DeleteMessageUseCaseImpl(messageStorage);
+  }
+
+  @Bean
+  NewFavoriteItemUseCase getNewFavoriteItemUseCase(FavoriteItemStorage favoriteItemStorage) {
+    return new NewFavoriteItemUseCaseImpl(favoriteItemStorage);
+  }
+
+  @Bean
+  SelectAllFavoriteItemsUseCase getSelectAllFavoriteItemsUseCase(
+      FavoriteItemStorage favoriteItemStorage) {
+    return new SelectAllFavoriteItemsUseCaseImpl(favoriteItemStorage);
+  }
+
+  @Bean
+  SelectFavoriteItemByIdUseCase getSelectFavoriteItemByIdUseCase(
+      FavoriteItemStorage favoriteItemStorage) {
+    return new SelectFavoriteItemByIdUseCaseImpl(favoriteItemStorage);
+  }
+
+  @Bean
+  DeleteFavoriteItemUseCase getDeleteFavoriteItemUseCase(FavoriteItemStorage favoriteItemStorage) {
+    return new DeleteFavoriteItemUseCaseImpl(favoriteItemStorage);
   }
 }

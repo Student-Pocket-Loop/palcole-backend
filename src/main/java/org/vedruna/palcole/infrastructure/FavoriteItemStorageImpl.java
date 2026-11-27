@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.vedruna.palcole.domain.exception.FavoriteItemAlreadyExistsException;
-import org.vedruna.palcole.domain.exception.FavoriteItemNotFoundException;
+import org.vedruna.palcole.domain.exception.favoriteItems.FavoriteItemAlreadyExistsException;
+import org.vedruna.palcole.domain.exception.favoriteItems.FavoriteItemNotFoundException;
 import org.vedruna.palcole.domain.model.FavoriteItem;
 import org.vedruna.palcole.domain.modelutils.PageModel;
 import org.vedruna.palcole.domain.modelutils.PageableModel;
 import org.vedruna.palcole.domain.ports.outbound.FavoriteItemStorage;
 import org.vedruna.palcole.infrastructure.adapters.outbound.converter.FavoriteItemOutConverter;
-import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoriteItemEntity;
-import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoriteItemId;
-import org.vedruna.palcole.infrastructure.adapters.outbound.storage.FavoriteItemRepository;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.FavoriteItemEntity;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.entity.FavoriteItemId;
+import org.vedruna.palcole.infrastructure.adapters.outbound.storage.repository.FavoriteItemRepository;
 
 @Component
 @AllArgsConstructor
