@@ -381,7 +381,7 @@ GET {{baseUrl}}/favorite-items/?page=0&size=5&sort=itemId,asc
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 ### FAVORITE ITEMS (sin PUT: solo hay clave) - GET BY ID
-GET {{baseUrl}}/favorite-items/1/1
+GET {{baseUrl}}/favorite-items/3/1
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 ### FAVORITE ITEMS (sin PUT: solo hay clave) - POST
