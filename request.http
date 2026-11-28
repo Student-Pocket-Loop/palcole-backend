@@ -368,3 +368,33 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 DELETE {{baseUrl}}/messages/4
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
+# =====================================================================
+#  FAVORITE ITEMS (sin PUT: solo hay clave)
+# =====================================================================
+
+### FAVORITE ITEMS (sin PUT: solo hay clave) - GET ALL
+GET {{baseUrl}}/favorite-items/
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### FAVORITE ITEMS (sin PUT: solo hay clave) - GET ALL (paginado y ordenado)
+GET {{baseUrl}}/favorite-items/?page=0&size=5&sort=itemId,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### FAVORITE ITEMS (sin PUT: solo hay clave) - GET BY ID
+GET {{baseUrl}}/favorite-items/3/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### FAVORITE ITEMS (sin PUT: solo hay clave) - POST
+POST {{baseUrl}}/favorite-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "userId": 1,
+    "itemId": 1
+}
+
+### FAVORITE ITEMS (sin PUT: solo hay clave) - DELETE
+DELETE {{baseUrl}}/favorite-items/1/1
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+

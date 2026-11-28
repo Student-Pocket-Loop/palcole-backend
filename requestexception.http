@@ -91,10 +91,40 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 GET {{baseUrl}}/conversations/9999
 Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
+### PUT de un mensaje que no existe
+### 404 - "MessageNotFoundException: Resource Not Found"
+PUT {{baseUrl}}/messages/9999
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "content": "Mensaje fantasma"
+}
+
+### DELETE de un favorito de artículo que no existe
+### 404 - "FavoriteItemNotFoundException: Resource Not Found" - ... con userId: 1 e itemId: 9999
+DELETE {{baseUrl}}/favorite-items/1/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### GET BY ID de un favorito de promoción que no existe
+### 404 - "FavoritePromotionNotFoundException: Resource Not Found"
+GET {{baseUrl}}/favorite-promotions/1/9999
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 # =====================================================================
 #  409 CONFLICT
 # =====================================================================
+
+### POST de un favorito de artículo que ya existe (ejecuta dos veces la misma petición)
+### 409 - "FavoriteItemAlreadyExistsException: Resource Already Exists"
+POST {{baseUrl}}/favorite-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "userId": 1,
+    "itemId": 1
+}
 
 ### POST de una categoría con un nombre que ya existe (name es UNIQUE)
 ### 409 - "DataIntegrityViolationException: Data Conflict"
@@ -106,6 +136,20 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "name": "Libros"
 }
 
+### POST de un artículo con una categoría que no existe (clave foránea)
+### 409 - "DataIntegrityViolationException: Data Conflict"
+POST {{baseUrl}}/academic-items/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "studentId": 1,
+    "categoryId": 9999,
+    "title": "Libro",
+    "description": "Prueba",
+    "itemCondition": "NUEVO",
+    "imageUrl": "https://ejemplo.com/libro.jpg"
+}
 
 ### DELETE del role 1 (ADMIN), que tiene usuarios asociados (FK RESTRICT)
 ### 409 - "DataIntegrityViolationException: Data Conflict"
@@ -128,16 +172,6 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "username": "fantasma",
     "email": "fantasma@localhost.es",
     "password": "Abcd1234"
-}
-
-### PUT de un mensaje que no existe
-### 404 - "MessageNotFoundException: Resource Not Found"
-PUT {{baseUrl}}/messages/9999
-Content-Type: application/json
-Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
-
-{
-    "content": "Mensaje fantasma"
 }
 
 ### REGISTER con un email que ya existe (manuel@localhost.es)
@@ -173,58 +207,6 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 
 {
     "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-}
-
-### POST de un usuario con email inválido y contraseña corta
-### 400 - "MethodArgumentNotValidException: Validation Error" - errors.email y errors.password
-POST {{baseUrl}}/users/
-Content-Type: application/json
-Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
-
-{
-    "roleId": 2,
-    "username": "invalido",
-    "email": "esto-no-es-un-email",
-    "password": "123"
-}
-
-### POST con JSON mal formado (falta cerrar la llave)
-### 400 - "HttpMessageNotReadableException: Malformed Body"
-POST {{baseUrl}}/categories/
-Content-Type: application/json
-Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
-
-{
-    "name": "MODERATOR"
-
-### GET BY ID con un id que no es un número
-### 400 - "MethodArgumentTypeMismatchException: Invalid Argument Type"
-GET {{baseUrl}}/categories/abc
-Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
-
-### GET ALL ordenando por una propiedad que no existe
-### 400 - "PropertyReferenceException: Invalid Property Reference" - invalidProperty: inexistente
-GET {{baseUrl}}/categories/?sort=inexistente,asc
-Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
-
-### REGISTER con datos inválidos (username vacío y email sin formato)
-### 400 - "MethodArgumentNotValidException: Validation Error" - errors.username y errors.email
-POST {{baseUrl}}/auth/register
-Content-Type: application/json
-
-{
-    "username": "",
-    "password": "Abcd1234",
-    "email": "esto-no-es-un-email"
-}
-
-### REFRESH con un refresh token inválido
-### 400 - "IllegalArgumentException: Invalid Business Argument" - Refresh Token inválido: ...
-POST {{baseUrl}}/auth/refresh
-Content-Type: application/json
-
-{
-    "refreshToken": "esto.no.es.un.token"
 }
 
 ### POST de una promoción con la fecha de fin anterior a la de inicio
@@ -315,6 +297,58 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
     "content": "   "
 }
 
+### POST de un usuario con email inválido y contraseña corta
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.email y errors.password
+POST {{baseUrl}}/users/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "roleId": 2,
+    "username": "invalido",
+    "email": "esto-no-es-un-email",
+    "password": "123"
+}
+
+### POST con JSON mal formado (falta cerrar la llave)
+### 400 - "HttpMessageNotReadableException: Malformed Body"
+POST {{baseUrl}}/categories/
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{
+    "name": "MODERATOR"
+
+### GET BY ID con un id que no es un número
+### 400 - "MethodArgumentTypeMismatchException: Invalid Argument Type"
+GET {{baseUrl}}/categories/abc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### GET ALL ordenando por una propiedad que no existe
+### 400 - "PropertyReferenceException: Invalid Property Reference" - invalidProperty: inexistente
+GET {{baseUrl}}/categories/?sort=inexistente,asc
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+### REGISTER con datos inválidos (username vacío y email sin formato)
+### 400 - "MethodArgumentNotValidException: Validation Error" - errors.username y errors.email
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": "Abcd1234",
+    "email": "esto-no-es-un-email"
+}
+
+### REFRESH con un refresh token inválido
+### 400 - "IllegalArgumentException: Invalid Business Argument" - Refresh Token inválido: ...
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "esto.no.es.un.token"
+}
+
 # =====================================================================
 #  401 UNAUTHORIZED  ->  HandlerSecurityExController
 # =====================================================================
@@ -364,23 +398,14 @@ Authorization: Bearer {{loginUser.response.body.$.access_token}}
     "name": "Prohibida"
 }
 
-### Un usuario con rol USER intenta entrar en el endpoint de admin
-### 403 - "AccessDeniedException: Access Denied"
-GET {{baseUrl}}/main/admin
-Authorization: Bearer {{loginUser.response.body.$.access_token}}
-
-### Petición a un endpoint protegido SIN token
-### 403 - la corta Spring Security antes de llegar al controlador (no pasa por los handlers)
-GET {{baseUrl}}/roles/
-
-### Petición con un token inválido (el filtro JWT lo ignora y se trata como anónimo)
-### 403 - igual que la anterior: la corta Spring Security
-GET {{baseUrl}}/roles/
-Authorization: Bearer esto.no.es.un.token
-
 ### Un usuario con rol USER intenta borrar una promoción (solo ADMIN escribe)
 ### 403 - "AccessDeniedException: Access Denied"
 DELETE {{baseUrl}}/promotions/1
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+### Un usuario con rol USER lista todos los mensajes (solo ADMIN)
+### 403 - "AccessDeniedException: Access Denied"
+GET {{baseUrl}}/messages/
 Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
 ### Un usuario con rol USER intenta publicar un artículo a nombre de otro usuario (studentId=1)
@@ -398,11 +423,24 @@ Authorization: Bearer {{loginUser.response.body.$.access_token}}
     "imageUrl": "https://ejemplo.com/libro.jpg"
 }
 
-### Un usuario con rol USER lista todos los mensajes (solo ADMIN)
+### Un usuario con rol USER intenta ver los favoritos de otro usuario
 ### 403 - "AccessDeniedException: Access Denied"
-GET {{baseUrl}}/messages/
+GET {{baseUrl}}/favorite-items/1/1
 Authorization: Bearer {{loginUser.response.body.$.access_token}}
 
+### Un usuario con rol USER intenta entrar en el endpoint de admin
+### 403 - "AccessDeniedException: Access Denied"
+GET {{baseUrl}}/main/admin
+Authorization: Bearer {{loginUser.response.body.$.access_token}}
+
+### Petición a un endpoint protegido SIN token
+### 403 - la corta Spring Security antes de llegar al controlador (no pasa por los handlers)
+GET {{baseUrl}}/roles/
+
+### Petición con un token inválido (el filtro JWT lo ignora y se trata como anónimo)
+### 403 - igual que la anterior: la corta Spring Security
+GET {{baseUrl}}/roles/
+Authorization: Bearer esto.no.es.un.token
 
 # =====================================================================
 #  405 METHOD NOT ALLOWED
@@ -417,3 +455,11 @@ Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
 {
     "name": "NUEVO"
 }
+
+### PUT sobre un favorito (la tabla solo tiene la clave, no hay nada que editar)
+### 405 - "HttpRequestMethodNotSupportedException: HTTP Method Not Allowed"
+PUT {{baseUrl}}/favorite-items/1/1
+Content-Type: application/json
+Authorization: Bearer {{loginAdmin.response.body.$.access_token}}
+
+{}
